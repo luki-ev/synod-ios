@@ -7,29 +7,29 @@
 	<key>pinRoomsWithUnread</key>
 	<true/>
 	<key>pushGatewayURL</key>
-	<string>https://matrix.org/_matrix/push/v1/notify</string>
+	<string>https://push.synod.im/_matrix/push/v1/notify</string>
 	<key>pushKitAppIdProd</key>
-	<string>im.vector.app.ios.voip.prod</string>
+	<string>im.synod.ios</string>
 	<key>identityserverurl</key>
-	<string>https://vector.im</string>
+	<string>https://id.synod.im</string>
 	<key>homeserverurl</key>
-	<string>https://matrix.org</string>
+	<string>https://synod.im</string>
 	<key>homeserver</key>
-	<string>matrix.org</string>
+	<string>synod.im</string>
 	<key>webAppUrlDev</key>
-	<string>https://riot.im/develop</string>
+	<string>https://web.synod.im/</string>
 	<key>webAppUrlBeta</key>
-	<string>https://riot.im/beta</string>
+	<string>https://web.synod.im/</string>
 	<key>webAppUrl</key>
-	<string>https://riot.im/app</string>
+	<string>https://web.synod.im/</string>
 	<key>matrixApps</key>
-	<true/>
+	<false/>
 	<key>integrationsUiUrl</key>
-	<string>https://scalar.vector.im/</string>
+	<string>https://dimension.synod.im/riot</string>
 	<key>integrationsRestUrl</key>
-	<string>https://scalar.vector.im/api</string>
+	<string>https://dimension.synod.im/api/v1/scalar</string>
 	<key>jitsiServerURL</key>
-	<string>https://jitsi.riot.im</string>
+	<string>https://web.synod.im</string>
 	<key>integrationsWidgetsUrls</key>
 	<array>
 		<string>https://scalar.vector.im/_matrix/integrations/v1</string>
@@ -41,7 +41,7 @@
 	<key>piwik</key>
 	<dict>
 		<key>url</key>
-		<string>https://piwik.riot.im/piwik.php</string>
+		<string>https://synod.im/piwik.php</string>
 		<key>siteId</key>
 		<string>1</string>
 	</dict>
@@ -58,11 +58,11 @@
 	<key>syncLocalContacts</key>
 	<false/>
 	<key>createConferenceCallsWithJitsi</key>
-	<true/>
+	<false/>
 	<key>stunServerFallback</key>
-	<string>stun:turn.matrix.org</string>
+	<string>stun:turn.synod.im</string>
 	<key>enableRageShake</key>
-	<true/>
+	<false/>
 	<key>maxAllowedMediaCacheSize</key>
 	<integer>1073741824</integer>
 	<key>presenceColorForOnlineUser</key>
@@ -72,12 +72,12 @@
 	<key>presenceColorForOfflineUser</key>
 	<integer>15020851</integer>
 	<key>bugReportEndpointUrl</key>
-	<string>https://riot.im/bugreports</string>
+	<string>https://web.synod.im/</string>
 	<key>bugReportApp</key>
 	<string>riot-ios</string>
 	<key>roomDirectoryServers</key>
 	<dict>
-		<key>matrix.org</key>
+		<key>synod.im</key>
 		<string></string>
 	</dict>
 </dict>
