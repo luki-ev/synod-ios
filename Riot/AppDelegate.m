@@ -262,7 +262,7 @@ NSString *const AppDelegateDidValidateEmailNotificationClientSecretKey = @"AppDe
 
     // Set the App Group identifier.
     MXSDKOptions *sdkOptions = [MXSDKOptions sharedInstance];
-    sdkOptions.applicationGroupIdentifier = @"group.im.vector";
+    sdkOptions.applicationGroupIdentifier = @"group.im.synod";
 
     // Redirect NSLogs to files only if we are not debugging
     if (!isatty(STDERR_FILENO))
