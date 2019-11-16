@@ -6,11 +6,8 @@
 	<string>development</string>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:www.vector.im</string>
-		<string>applinks:vector.im</string>
-		<string>applinks:riot.im</string>
-		<string>applinks:www.riot.im</string>
-		<string>webcredentials:riot.im</string>
+		<string>applinks:synod.im</string>
+		<string>webcredentials:synod.im</string>
 	</array>
 	<key>com.apple.developer.icloud-container-identifiers</key>
 	<array>

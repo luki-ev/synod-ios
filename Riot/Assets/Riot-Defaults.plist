@@ -9,7 +9,7 @@
 	<key>pushGatewayURL</key>
 	<string>https://push.synod.im/_matrix/push/v1/notify</string>
 	<key>pushKitAppIdProd</key>
-	<string>im.synod.ios</string>
+	<string>im.synod</string>
 	<key>identityserverurl</key>
 	<string>https://id.synod.im</string>
 	<key>homeserverurl</key>
@@ -74,7 +74,7 @@
 	<key>bugReportEndpointUrl</key>
 	<string>https://web.synod.im/</string>
 	<key>bugReportApp</key>
-	<string>riot-ios</string>
+	<string>synod-ios</string>
 	<key>roomDirectoryServers</key>
 	<dict>
 		<key>synod.im</key>
