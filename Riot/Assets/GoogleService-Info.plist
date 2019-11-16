@@ -7,9 +7,9 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>im.vector.app</string>
+	<string>im.synod</string>
 	<key>PROJECT_ID</key>
-	<string>vector-ios</string>
+	<string>synod-ios</string>
 	<key>IS_ADS_ENABLED</key>
 	<false/>
 	<key>IS_ANALYTICS_ENABLED</key>
