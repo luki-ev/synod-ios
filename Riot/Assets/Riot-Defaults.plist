@@ -32,11 +32,7 @@
 	<string>https://web.synod.im</string>
 	<key>integrationsWidgetsUrls</key>
 	<array>
-		<string>https://scalar.vector.im/_matrix/integrations/v1</string>
-		<string>https://scalar.vector.im/api</string>
-		<string>https://scalar-staging.vector.im/_matrix/integrations/v1</string>
-		<string>https://scalar-staging.vector.im/api</string>
-		<string>https://scalar-staging.riot.im/scalar/api</string>
+		<string>https://dimension.synod.im/widgets</string>
 	</array>
 	<key>piwik</key>
 	<dict>
@@ -72,7 +68,7 @@
 	<key>presenceColorForOfflineUser</key>
 	<integer>15020851</integer>
 	<key>bugReportEndpointUrl</key>
-	<string>https://web.synod.im/</string>
+	<string>https://bugs.synod.im/</string>
 	<key>bugReportApp</key>
 	<string>synod-ios</string>
 	<key>roomDirectoryServers</key>
