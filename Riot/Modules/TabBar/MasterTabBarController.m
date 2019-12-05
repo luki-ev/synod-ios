@@ -177,7 +177,8 @@
         // (Check whether 'enableCrashReport' flag has been set once)        
         if (!RiotSettings.shared.isEnableCrashReportHasBeenSetOnce)
         {
-            [self promptUserBeforeUsingAnalytics];
+            // Synod.im: no analytics prompt, analytics disabled
+            //[self promptUserBeforeUsingAnalytics];
         }
         
         [self refreshTabBarBadges];
