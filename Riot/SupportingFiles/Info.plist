@@ -26,11 +26,6 @@
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
 	<key>NSCalendarsUsageDescription</key>
 	<string>See your scheduled meetings in the app.</string>
 	<key>NSCameraUsageDescription</key>
