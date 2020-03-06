@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IntentPhrases</key>
+	<array>
+		<dict>
+			<key>IntentName</key>
+			<string>INStartVideoCallIntent</string>
+			<key>IntentExamples</key>
+			<array>
+				<string>Start a video call with Maria</string>
+				<string>Call George via video call</string>
+			</array>
+		</dict>
+		<dict>
+			<key>IntentName</key>
+			<string>INSendMessageIntent</string>
+			<key>IntentExamples</key>
+			<array>
+				<string>Send a message to Alex</string>
+				<string>Tell Susanna I will be there soon</string>
+			</array>
+		</dict>
+		<dict>
+			<key>IntentName</key>
+			<string>INStartAudioCallIntent</string>
+			<key>IntentExamples</key>
+			<array>
+				<string>Call James via Synod</string>
+				<string>Call Jenna</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>
