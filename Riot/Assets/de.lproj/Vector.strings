@@ -231,12 +231,12 @@
 "settings_labs_e2e_encryption" = "Ende-zu-Ende-Verschlüsselung";
 "settings_version" = "Version %@";
 "settings_olm_version" = "Olm-Version %@";
-"settings_copyright" = "Kopierrecht";
-"settings_copyright_url" = "https://riot.im/copyright";
-"settings_term_conditions" = "Geschäftsbedingungen";
+"settings_copyright" = "Urheberrecht";
+"settings_copyright_url" = "https://synod.im/copyright";
+"settings_term_conditions" = "Nutzungsbedingungen";
 "settings_privacy_policy" = "Datenschutzerklärung";
-"settings_privacy_policy_url" = "https://riot.im/privacy";
-"settings_term_conditions_url" = "https://riot.im/tac_apple";
+"settings_privacy_policy_url" = "https://synod.im/privacy";
+"settings_term_conditions_url" = "https://synod.im/terms";
 "settings_send_crash_report" = "Sende anonyme Absturz- & Nutzungsdaten";
 "settings_change_password" = "Passwort ändern";
 "settings_old_password" = "altes Passwort";
