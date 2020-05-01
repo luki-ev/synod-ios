@@ -95,6 +95,9 @@ platform :ios do
         # Perform a pod install
         cocoapods(repo_update: true)
 
+        # Workaround for https://github.com/jitsi/jitsi-meet/issues/6474
+        rewrite_react_native_netinfo_reachability
+
         # Select a config
         if adhoc
             export_method = "ad-hoc"
@@ -251,6 +254,17 @@ platform :ios do
         scheme = Xcodeproj::XCScheme.new(scheme_path)
         scheme.build_action.xml_element.attributes['parallelizeBuildables'] = 'NO' 
         scheme.save_as(project_path, scheme_name)
+    end
+
+    desc "Rewrite react-native-netinfo internet reachability url"
+    private_lane :rewrite_react_native_netinfo_reachability do
+        reachability_url = ENV['REACHABILITY_URL']
+
+        if reachability_url.to_s.empty?
+            reachability_url = "https://synod.im/generate_204"
+        end
+
+        sh("sed", "-i", "s,https://clients3.google.com/generate_204,#{reachability_url},g", "Pods/JitsiMeetSDK/Frameworks/JitsiMeet.framework/main.jsbundle")
     end
 
 end
