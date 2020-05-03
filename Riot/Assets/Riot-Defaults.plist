@@ -29,7 +29,7 @@
 	<key>integrationsRestUrl</key>
 	<string>https://dimension.synod.im/api/v1/scalar</string>
 	<key>jitsiServerURL</key>
-	<string>https://web.synod.im</string>
+	<string>https://jitsi.luki.org</string>
 	<key>integrationsWidgetsUrls</key>
 	<array>
 		<string>https://dimension.synod.im/widgets</string>
