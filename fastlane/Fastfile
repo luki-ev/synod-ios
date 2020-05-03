@@ -264,7 +264,7 @@ platform :ios do
             reachability_url = "https://synod.im/generate_204"
         end
 
-        sh("sed", "-i", "s,https://clients3.google.com/generate_204,#{reachability_url},g", "Pods/JitsiMeetSDK/Frameworks/JitsiMeet.framework/main.jsbundle")
+        sh("sed", "-i.bak", "s,https://clients3.google.com/generate_204,#{reachability_url},g", "../Pods/JitsiMeetSDK/Frameworks/JitsiMeet.framework/main.jsbundle")
     end
 
 end
