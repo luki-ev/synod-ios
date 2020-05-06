@@ -39,7 +39,7 @@
 		<key>url</key>
 		<string>https://synod.im/piwik.php</string>
 		<key>siteId</key>
-		<string>1</string>
+		<string>14</string>
 	</dict>
 	<key>showAllEventsInRoomHistory</key>
 	<false/>
