@@ -41,6 +41,9 @@ final public class OnBoardingManager: NSObject {
     // MARK: - Public
     
     @objc public func createRiotBotDirectMessageIfNeeded(success: (() -> Void)?, failure: ((Error) -> Void)?) {
+        // synod.im: No onboarding bot, return directly
+        success?()
+        return
         
         // Check user has joined no rooms so is a new comer
         guard self.isUserJoinedARoom() == false else {
