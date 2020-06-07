@@ -1110,10 +1110,11 @@
     // Create DM with Riot-bot on new account creation.
     if (self.authType == MXKAuthenticationTypeRegister)
     {
-        MXRoomCreationParameters *roomCreationParameters = [MXRoomCreationParameters parametersForDirectRoomWithUser:@"@riot-bot:matrix.org"];
+        // synod.im: No onboarding bot
+        /*MXRoomCreationParameters *roomCreationParameters = [MXRoomCreationParameters parametersForDirectRoomWithUser:@"@riot-bot:matrix.org"];
         [session createRoomWithParameters:roomCreationParameters success:nil failure:^(NSError *error) {
             NSLog(@"[AuthenticationVC] Create chat with riot-bot failed");
-        }];
+        }];*/
     }
     
     // Wait for session change to present complete security screen if needed
