@@ -172,6 +172,9 @@
     // The caller image view is circular
     self.callerImageView.layer.cornerRadius = self.callerImageViewWidthConstraint.constant / 2;
     self.callerImageView.clipsToBounds = YES;
+
+    // Fix for https://github.com/vector-im/riot-ios/issues/2458
+    self.localPreviewContainerView.transform = CGAffineTransformMakeScale(-1.0, 1.0);
 }
 
 - (void)viewWillDisappear:(BOOL)animated
