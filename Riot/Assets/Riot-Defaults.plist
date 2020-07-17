@@ -10,6 +10,12 @@
 	<string>https://push.synod.im/_matrix/push/v1/notify</string>
 	<key>pushKitAppIdProd</key>
 	<string>im.synod</string>
+	<key>pushKitAppIdDev</key>
+	<string>im.vector.app.ios.voip.dev</string>
+	<key>pusherAppIdDev</key>
+	<string>im.vector.app.ios.dev</string>
+	<key>pusherAppIdProd</key>
+	<string>im.vector.app.ios.prod</string>
 	<key>identityserverurl</key>
 	<string>https://id.synod.im</string>
 	<key>homeserverurl</key>
@@ -76,5 +82,13 @@
 		<key>synod.im</key>
 		<string></string>
 	</dict>
+	<key>settingsCopyrightUrl</key>
+	<string>https://element.io/copyright</string>
+	<key>settingsPrivacyPolicyUrl</key>
+	<string>https://element.io/privacy</string>
+	<key>settingsTermsConditionsUrl</key>
+	<string>https://element.io/terms-of-service</string>
+	<key>enableBotCreation</key>
+	<false/>
 </dict>
 </plist>
