@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "launch_screen_logo.png",
+      "filename" : "synod-im-logo-white.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "launch_screen_logo@2x.png",
+      "filename" : "synod-im-logo-white-1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "launch_screen_logo@3x.png",
+      "filename" : "synod-im-logo-white-2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
