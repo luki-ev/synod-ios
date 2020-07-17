@@ -11,11 +11,11 @@
 	<key>pushKitAppIdProd</key>
 	<string>im.synod</string>
 	<key>pushKitAppIdDev</key>
-	<string>im.vector.app.ios.voip.dev</string>
+	<string>im.synod.ios.voip.dev</string>
 	<key>pusherAppIdDev</key>
-	<string>im.vector.app.ios.dev</string>
+	<string>im.synod.ios.dev</string>
 	<key>pusherAppIdProd</key>
-	<string>im.vector.app.ios.prod</string>
+	<string>im.synod.ios.prod</string>
 	<key>identityserverurl</key>
 	<string>https://id.synod.im</string>
 	<key>homeserverurl</key>

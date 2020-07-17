@@ -3394,6 +3394,10 @@ internal enum VectorL10n {
   internal static var settingsCopyright: String { 
     return VectorL10n.tr("Vector", "settings_copyright") 
   }
+  /// https://synod.im/copyright
+  internal static var settingsCopyrightUrl: String { 
+    return VectorL10n.tr("Vector", "settings_copyright_url") 
+  }
   /// Encrypt to verified sessions only
   internal static var settingsCryptoBlacklistUnverifiedDevices: String { 
     return VectorL10n.tr("Vector", "settings_crypto_blacklist_unverified_devices") 
@@ -3734,6 +3738,10 @@ internal enum VectorL10n {
   internal static var settingsPrivacyPolicy: String { 
     return VectorL10n.tr("Vector", "settings_privacy_policy") 
   }
+  /// https://synod.im/privacy
+  internal static var settingsPrivacyPolicyUrl: String { 
+    return VectorL10n.tr("Vector", "settings_privacy_policy_url") 
+  }
   /// Profile Picture
   internal static var settingsProfilePicture: String { 
     return VectorL10n.tr("Vector", "settings_profile_picture") 
@@ -3785,6 +3793,10 @@ internal enum VectorL10n {
   /// Terms & Conditions
   internal static var settingsTermConditions: String { 
     return VectorL10n.tr("Vector", "settings_term_conditions") 
+  }
+  /// https://synod.im/terms
+  internal static var settingsTermConditionsUrl: String { 
+    return VectorL10n.tr("Vector", "settings_term_conditions_url") 
   }
   /// Third-party Notices
   internal static var settingsThirdPartyNotices: String { 
