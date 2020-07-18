@@ -62,7 +62,7 @@
 	<key>createConferenceCallsWithJitsi</key>
 	<false/>
 	<key>stunServerFallback</key>
-	<string>stun:turn.synod.im</string>
+	<string>stun:turn.jitsi.luki.org</string>
 	<key>enableRageShake</key>
 	<false/>
 	<key>maxAllowedMediaCacheSize</key>
