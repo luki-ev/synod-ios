@@ -83,11 +83,11 @@
 		<string></string>
 	</dict>
 	<key>settingsCopyrightUrl</key>
-	<string>https://element.io/copyright</string>
+	<string>https://synod.im/terms</string>
 	<key>settingsPrivacyPolicyUrl</key>
-	<string>https://element.io/privacy</string>
+	<string>https://synod.im/privacy</string>
 	<key>settingsTermsConditionsUrl</key>
-	<string>https://element.io/terms-of-service</string>
+	<string>https://synod.im/terms</string>
 	<key>enableBotCreation</key>
 	<false/>
 </dict>
