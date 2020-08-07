@@ -36,7 +36,7 @@ class CommonConfiguration: NSObject, Configurable {
         Bundle.mxk_customizeLocalizedStringTableName("Vector")
         
         // Disable CallKit
-        settings.isCallKitEnabled = true
+        settings.isCallKitEnabled = false
         
         // Enable lazy loading
         settings.syncWithLazyLoadOfRoomMembers = true
