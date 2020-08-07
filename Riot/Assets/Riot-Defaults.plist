@@ -6,47 +6,8 @@
 	<true/>
 	<key>pinRoomsWithUnread</key>
 	<true/>
-	<key>pushGatewayURL</key>
-	<string>https://push.synod.im/_matrix/push/v1/notify</string>
-	<key>pushKitAppIdProd</key>
-	<string>im.synod</string>
-	<key>pushKitAppIdDev</key>
-	<string>im.synod.ios.voip.dev</string>
-	<key>pusherAppIdDev</key>
-	<string>im.synod.ios.dev</string>
-	<key>pusherAppIdProd</key>
-	<string>im.synod.ios.prod</string>
-	<key>identityserverurl</key>
-	<string>https://id.synod.im</string>
-	<key>homeserverurl</key>
-	<string>https://synod.im</string>
-	<key>homeserver</key>
-	<string>synod.im</string>
-	<key>webAppUrlDev</key>
-	<string>https://web.synod.im/</string>
-	<key>webAppUrlBeta</key>
-	<string>https://web.synod.im/</string>
-	<key>webAppUrl</key>
-	<string>https://web.synod.im/</string>
 	<key>matrixApps</key>
 	<false/>
-	<key>integrationsUiUrl</key>
-	<string>https://dimension.synod.im/riot</string>
-	<key>integrationsRestUrl</key>
-	<string>https://dimension.synod.im/api/v1/scalar</string>
-	<key>jitsiServerURL</key>
-	<string>https://jitsi.luki.org</string>
-	<key>integrationsWidgetsUrls</key>
-	<array>
-		<string>https://dimension.synod.im/widgets</string>
-	</array>
-	<key>piwik</key>
-	<dict>
-		<key>url</key>
-		<string>https://synod.im/piwik.php</string>
-		<key>siteId</key>
-		<string>14</string>
-	</dict>
 	<key>showAllEventsInRoomHistory</key>
 	<false/>
 	<key>showRedactionsInRoomHistory</key>
@@ -61,8 +22,6 @@
 	<false/>
 	<key>createConferenceCallsWithJitsi</key>
 	<false/>
-	<key>stunServerFallback</key>
-	<string>stun:turn.jitsi.luki.org</string>
 	<key>enableRageShake</key>
 	<false/>
 	<key>maxAllowedMediaCacheSize</key>
@@ -73,21 +32,6 @@
 	<integer>15066368</integer>
 	<key>presenceColorForOfflineUser</key>
 	<integer>15020851</integer>
-	<key>bugReportEndpointUrl</key>
-	<string>https://bugs.synod.im/</string>
-	<key>bugReportApp</key>
-	<string>synod-ios</string>
-	<key>roomDirectoryServers</key>
-	<dict>
-		<key>synod.im</key>
-		<string></string>
-	</dict>
-	<key>settingsCopyrightUrl</key>
-	<string>https://synod.im/terms</string>
-	<key>settingsPrivacyPolicyUrl</key>
-	<string>https://synod.im/privacy</string>
-	<key>settingsTermsConditionsUrl</key>
-	<string>https://synod.im/terms</string>
 	<key>enableBotCreation</key>
 	<false/>
 </dict>

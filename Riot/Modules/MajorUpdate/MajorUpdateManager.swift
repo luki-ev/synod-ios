@@ -35,7 +35,7 @@ final public class MajorUpdateManager: NSObject {
         
         guard let lastUsedAppVersion = AppVersion.lastUsed else {
             NSLog("[MajorUpdateManager] shouldShowMajorUpdate: Unknown previous version")
-            return true
+            return false
         }
         
         let shouldShowMajorUpdate = (lastUsedAppVersion.compare(Constants.lastMajorAppVersion) == .orderedAscending)
