@@ -128,6 +128,9 @@ platform :ios do
     # Perform a pod install
     cocoapods(repo_update: true)
 
+    # Workaround for https://github.com/jitsi/jitsi-meet/issues/6474
+    rewrite_react_native_netinfo_reachability
+
     # Select a config
     if adhoc
       export_method = "ad-hoc"
@@ -343,5 +346,16 @@ platform :ios do
     list.split("\n")
         .map { |line| line.sub(%r{[0-9a-f]+\trefs/heads/}, '').chomp }
         .last # Latest ref found, in "version:refname" semantic order
+  end
+
+  desc "Rewrite react-native-netinfo internet reachability url"
+  private_lane :rewrite_react_native_netinfo_reachability do
+      reachability_url = ENV['REACHABILITY_URL']
+
+      if reachability_url.to_s.empty?
+          reachability_url = "https://synod.im/generate_204"
+      end
+
+      sh("sed", "-i.bak", "s,https://clients3.google.com/generate_204,#{reachability_url},g", "../Pods/JitsiMeetSDK/Frameworks/JitsiMeet.framework/main.jsbundle")
   end
 end
