@@ -39,7 +39,7 @@ final class BuildSettings: NSObject {
     }
     
     static var pushKitAppIdProd: String {
-        return baseBundleIdentifier + ".ios.voip.prod"
+        return baseBundleIdentifier
     }
     
     static var pushKitAppIdDev: String {
@@ -55,36 +55,27 @@ final class BuildSettings: NSObject {
     }
     
     // Element-Web instance for the app
-    static let applicationWebAppUrlString = "https://app.element.io"
+    static let applicationWebAppUrlString = "https://web.synod.im"
     
     
     // MARK: - Server configuration
     
     // Default servers proposed on the authentication screen
-    static let serverConfigDefaultHomeserverUrlString = "https://matrix.org"
-    static let serverConfigDefaultIdentityServerUrlString = "https://vector.im"
+    static let serverConfigDefaultHomeserverUrlString = "https://synod.im"
+    static let serverConfigDefaultIdentityServerUrlString = "https://id.synod.im"
     
-    static let serverConfigSygnalAPIUrlString = "https://matrix.org/_matrix/push/v1/notify"
+    static let serverConfigSygnalAPIUrlString = "https://push.synod.im/_matrix/push/v1/notify"
     
     
     // MARK: - Legal URLs
-    static let applicationCopyrightUrlString = "https://element.io/copyright"
-    static let applicationPrivacyPolicyUrlString = "https://element.io/privacy"
-    static let applicationTermsConditionsUrlString = "https://element.io/terms-of-service"
+    static let applicationCopyrightUrlString = "https://synod.im/terms"
+    static let applicationPrivacyPolicyUrlString = "https://synod.im/privacy"
+    static let applicationTermsConditionsUrlString = "https://synod.im/terms"
     
     
     // MARk: - Matrix permalinks
     // Paths for URLs that will considered as Matrix permalinks. Those permalinks are opened within the app
     static let matrixPermalinkPaths: [String: [String]] = [
-        "app.element.io": [],
-        "staging.element.io": [],
-        "develop.element.io": [],
-        "mobile.element.io": [""],
-        // Historical ones
-        "riot.im": ["/app", "/staging", "/develop"],
-        "www.riot.im": ["/app", "/staging", "/develop"],
-        "vector.im": ["/app", "/staging", "/develop"],
-        "www.vector.im": ["/app", "/staging", "/develop"],
         // Official Matrix ones
         "matrix.to": ["/"],
         "www.matrix.to": ["/"],
@@ -99,7 +90,7 @@ final class BuildSettings: NSObject {
         return false
         #endif
     }
-    static let stunServerFallbackUrlString: String? = "stun:turn.matrix.org"
+    static let stunServerFallbackUrlString: String? = "stun:turn.jitsi.luki.org"
     
     
     // MARK: -  Public rooms Directory
@@ -107,34 +98,30 @@ final class BuildSettings: NSObject {
     static let publicRoomsAllowServerChange: Bool = true
     // List of homeservers for the public rooms directory
     static let publicRoomsDirectoryServers = [
-        "matrix.org"
+        "synod.im"
     ]
     
     
     // MARK: - Analytics
-    static let analyticsServerUrl = URL(string: "https://piwik.riot.im/piwik.php")
-    static let analyticsAppId = "14"
+    static let analyticsServerUrl = URL(string: "https://synod.im/piwik.php")
+    static let analyticsAppId = "1"
     
     
     // MARK: - Bug report
-    static let bugReportEndpointUrlString = "https://riot.im/bugreports"
+    static let bugReportEndpointUrlString = "https://synod.im/bugreports"
     // Use the name allocated by the bug report server
-    static let bugReportApplicationId = "riot-ios"
+    static let bugReportApplicationId = "synod-ios"
     
     
     // MARK: - Integrations
-    static let integrationsUiUrlString = "https://scalar.vector.im/"
-    static let integrationsRestApiUrlString = "https://scalar.vector.im/api"
+    static let integrationsUiUrlString = "https://dimension.synod.im/riot"
+    static let integrationsRestApiUrlString = "https://dimension.synod.im/api/v1/scalar"
     // Widgets in those paths require a scalar token
     static let integrationsScalarWidgetsPaths = [
-        "https://scalar.vector.im/_matrix/integrations/v1",
-        "https://scalar.vector.im/api",
-        "https://scalar-staging.vector.im/_matrix/integrations/v1",
-        "https://scalar-staging.vector.im/api",
-        "https://scalar-staging.riot.im/scalar/api",
+        "https://dimension.synod.im/widgets",
     ]
     // Jitsi server used outside integrations to create conference calls from the call button in the timeline
-    static let jitsiServerUrl = NSURL(string: "https://jitsi.riot.im")
+    static let jitsiServerUrl = NSURL(string: "https://jitsi.luki.org")
 
     
     // MARK: - Features
@@ -143,7 +130,7 @@ final class BuildSettings: NSObject {
     static let forcePinProtection: Bool = false
     
     /// Force non-jailbroken app usage
-    static let forceNonJailbrokenUsage: Bool = true
+    static let forceNonJailbrokenUsage: Bool = false
     
     static let allowSendingStickers: Bool = true
     
@@ -155,7 +142,7 @@ final class BuildSettings: NSObject {
     static let settingsScreenShowUserFirstName: Bool = false
     static let settingsScreenShowUserSurname: Bool = false
     static let settingsScreenAllowAddingEmailThreepids: Bool = true
-    static let settingsScreenAllowAddingPhoneThreepids: Bool = true
+    static let settingsScreenAllowAddingPhoneThreepids: Bool = false
     static let settingsScreenShowThreepidExplanatory: Bool = true
     static let settingsScreenShowDiscoverySettings: Bool = true
     static let settingsScreenAllowIdentityServerConfig: Bool = true
@@ -163,7 +150,7 @@ final class BuildSettings: NSObject {
     static let settingsScreenShowLabSettings: Bool = true
     static let settingsScreenAllowChangingRageshakeSettings: Bool = true
     static let settingsScreenAllowChangingCrashUsageDataSettings: Bool = true
-    static let settingsScreenAllowBugReportingManually: Bool = true
+    static let settingsScreenAllowBugReportingManually: Bool = false
     static let settingsScreenAllowDeactivatingAccount: Bool = true
     
     // MARK: - Message
