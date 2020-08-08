@@ -474,7 +474,7 @@ internal enum VectorL10n {
   internal static var cancel: String { 
     return VectorL10n.tr("Vector", "cancel") 
   }
-  /// Element Android
+  /// Synod
   internal static var clientAndroidName: String { 
     return VectorL10n.tr("Vector", "client_android_name") 
   }
@@ -482,11 +482,11 @@ internal enum VectorL10n {
   internal static var clientDesktopName: String { 
     return VectorL10n.tr("Vector", "client_desktop_name") 
   }
-  /// Element iOS
+  /// Synod iOS
   internal static var clientIosName: String { 
     return VectorL10n.tr("Vector", "client_ios_name") 
   }
-  /// Element Web
+  /// Synod Web
   internal static var clientWebName: String { 
     return VectorL10n.tr("Vector", "client_web_name") 
   }
@@ -510,7 +510,7 @@ internal enum VectorL10n {
   internal static var contactsAddressBookNoIdentityServer: String { 
     return VectorL10n.tr("Vector", "contacts_address_book_no_identity_server") 
   }
-  /// You didn't allow Element to access your local contacts
+  /// You didn't allow Synod to access your local contacts
   internal static var contactsAddressBookPermissionDenied: String { 
     return VectorL10n.tr("Vector", "contacts_address_book_permission_denied") 
   }
@@ -914,7 +914,7 @@ internal enum VectorL10n {
   internal static var deviceVerificationSelfVerifyWaitAdditionalInformation: String { 
     return VectorL10n.tr("Vector", "device_verification_self_verify_wait_additional_information") 
   }
-  /// Verify this session from one of your other sessions, granting it access to encrypted messages.\n\nUse the latest Element on your other devices:
+  /// Verify this session from one of your other sessions, granting it access to encrypted messages.\n\nUse the latest Synod on your other devices:
   internal static var deviceVerificationSelfVerifyWaitInformation: String { 
     return VectorL10n.tr("Vector", "device_verification_self_verify_wait_information") 
   }
@@ -1026,7 +1026,7 @@ internal enum VectorL10n {
   internal static var doNotAskAgain: String { 
     return VectorL10n.tr("Vector", "do_not_ask_again") 
   }
-  /// Element now supports end-to-end encryption but you need to log in again to enable it.\n\nYou can do it now or later from the application settings.
+  /// Synod now supports end-to-end encryption but you need to log in again to enable it.\n\nYou can do it now or later from the application settings.
   internal static var e2eEnablingOnAppUpdate: String { 
     return VectorL10n.tr("Vector", "e2e_enabling_on_app_update") 
   }
@@ -2058,7 +2058,7 @@ internal enum VectorL10n {
   internal static var rename: String { 
     return VectorL10n.tr("Vector", "rename") 
   }
-  /// Please launch Element on another device that can decrypt the message so it can send the keys to this session.
+  /// Please launch Synod on another device that can decrypt the message so it can send the keys to this session.
   internal static var rerequestKeysAlertMessage: String { 
     return VectorL10n.tr("Vector", "rerequest_keys_alert_message") 
   }
@@ -3282,7 +3282,7 @@ internal enum VectorL10n {
   internal static var securitySettingsBlacklistUnverifiedDevicesDescription: String { 
     return VectorL10n.tr("Vector", "security_settings_blacklist_unverified_devices_description") 
   }
-  /// Sorry. This action is not available on Element iOS yet. Please use another Matrix client to set it up. Element iOS will use it.
+  /// Sorry. This action is not available on Synod iOS yet. Please use another Matrix client to set it up. Synod iOS will use it.
   internal static var securitySettingsComingSoon: String { 
     return VectorL10n.tr("Vector", "security_settings_coming_soon") 
   }
@@ -3450,7 +3450,7 @@ internal enum VectorL10n {
   internal static var settingsAdvanced: String { 
     return VectorL10n.tr("Vector", "settings_advanced") 
   }
-  /// Receive incoming calls on your lock screen. See your Element calls in the system's call history. If iCloud is enabled, this call history will be shared with Apple.
+  /// Receive incoming calls on your lock screen. See your Synod calls in the system's call history. If iCloud is enabled, this call history will be shared with Apple.
   internal static var settingsCallkitInfo: String { 
     return VectorL10n.tr("Vector", "settings_callkit_info") 
   }
