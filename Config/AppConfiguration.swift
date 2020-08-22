@@ -29,7 +29,7 @@ class AppConfiguration: CommonConfiguration {
     
     private func setupAppSettings() {
         // Enable CallKit for app
-        MXKAppSettings.standard()?.isCallKitEnabled = true
+        MXKAppSettings.standard()?.isCallKitEnabled = false
         
         // Enable long press on event in bubble cells
         MXKRoomBubbleTableViewCell.disableLongPressGesture(onEvent: false)
