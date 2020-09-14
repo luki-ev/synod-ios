@@ -18,12 +18,12 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 #import <UserNotifications/UserNotifications.h>
-#import "Riot-Swift.h"
 
 @class MXSession;
 @class MXEvent;
 @class MXPushRule;
 @class MXKAccount;
+@class PushNotificationStore;
 @protocol PushNotificationServiceDelegate;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -79,6 +79,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Method to be called when the application becomes active.
 - (void)applicationDidBecomeActive;
+
+/**
+ Make sure the account has no more PushKit pusher.
+ 
+ @param session The session on this account.
+ */
+- (void)checkPushKitPushersInSession:(MXSession*)session;
+
 
 /**
  Remove delivered notifications for a given room id except call notifications

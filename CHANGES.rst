@@ -1,3 +1,89 @@
+Changes in 1.0.10 (2020-09-08)
+=================================================
+
+✨ Features
+ * 
+    
+🙌 Improvements
+ * AppDelegate: Convert to Swift (#3594).
+    
+🐛 Bugfix
+ * Show pin code screen on every foreground (#3620). 
+ * Close keyboard on pin code screen (#3622).
+ * Fix content leakage on pin code protection (#3624).
+    
+⚠️ API Changes
+ * 
+    
+🗣 Translations
+ * 
+    
+🧱 Build
+ * buildRelease.sh: Make sure it works for both branches and tags
+    
+Others
+ * 
+
+Improvements:
+ * Upgrade MatrixKit version ([v0.12.18](https://github.com/matrix-org/matrix-ios-kit/releases/tag/v0.12.18)).
+
+Changes in 1.0.9 (2020-09-03)
+=================================================
+
+Features:
+ * 
+
+Improvements:
+ * Upgrade MatrixKit version ([v0.12.17](https://github.com/matrix-org/matrix-ios-kit/releases/tag/v0.12.17)).
+ * 
+
+Bugfix:
+ * 
+
+API Change:
+ * 
+
+Translations:
+ * 
+
+Others:
+ * 
+
+Build:
+ * 
+
+Test:
+ * 
+
+Changes in 1.0.8 (2020-09-03)
+=================================================
+
+Features:
+ * 
+
+Improvements:
+ * Upgrade MatrixKit version ([v0.12.17](https://github.com/matrix-org/matrix-ios-kit/releases/tag/v0.12.17)).
+ * 
+
+Bugfix:
+ * PushKit: Add more logs when removing PushKit pusher (#3577).
+ * PushKit: Check all registered pushers and remove PushKit ones (#3577).
+
+API Change:
+ * 
+
+Translations:
+ * 
+
+Others:
+ * 
+
+Build:
+ * 
+
+Test:
+ * 
+
 Changes in 1.0.7 (2020-08-28)
 =================================================
 
