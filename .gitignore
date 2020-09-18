@@ -38,3 +38,5 @@ fastlane/Preview.html
 fastlane/metadata/
 
 provisioning_profiles/
+
+.DS_Store
