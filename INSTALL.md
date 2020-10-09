@@ -116,6 +116,13 @@ $ open Riot.xcworkspace
 
 You may need to change the bundle identifier and app group identifier to be unique to get Xcode to build the app. Make sure to change the bundle identifier,  application group identifier and app name in the `Config/Common.xcconfig` file to your new identifiers.
 
+## Update
+
+```
+$ bundle exec pod repo update
+$ bundle exec pod install
+```
+
 ## Generate IPA
 
 To build the IPA we are currently using [fastlane](https://fastlane.tools/).
