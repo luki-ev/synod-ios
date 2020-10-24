@@ -67,12 +67,6 @@
 // Accessibility
 "accessibility_checkbox_label" = "checkbox";
 
-// MARK: Clients
-"client_desktop_name" = "Element Desktop";
-"client_web_name" = "Synod Web";
-"client_ios_name" = "Synod iOS";
-"client_android_name" = "Synod";
-
 // Authentication
 "auth_login" = "Log in";
 "auth_register" = "Register";
