@@ -240,6 +240,20 @@ class NotificationService: UNNotificationServiceExtension {
                     return
                 }
                 NSLog("[NotificationService] fetchEvent: MXSession.event method returned error: \(String(describing: error))")
+                
+                // check if the fetch failed with unauthorized or unknown token
+                // if so, we are using an old token due to logout/login and the NSE needs to be restarted
+                // to reload the authentication information into the NSE on the next notification
+                // this leads for the notification to be displayed as came from APNS
+                // FIXES https://github.com/vector-im/element-ios/issues/3719
+                if let mxError = MXError(nsError: error),
+                    (mxError.errcode == kMXErrCodeStringUnknownToken
+                        || mxError.errcode == kMXErrCodeStringUnknown
+                        || mxError.errcode == kMXErrCodeStringUnauthorized) {
+                    NSLog("[NotificationService] fetchEvent: Exiting to reload authentication from file on next notification")
+                    exit(0)
+                }
+                
                 self.fallbackToBestAttemptContent(forEventId: eventId)
             }
         }
