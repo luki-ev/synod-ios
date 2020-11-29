@@ -1245,3 +1245,8 @@
 "secrets_reset_warning_message" = "Du wirst ohne Nachrichtenverlauf, Nachrichten, vertraute Geräte oder vertraute Benutzer neu-starten.";
 "secrets_reset_warning_title" = "Falls du alles zurücksetzt";
 "secrets_reset_information" = "Tu dies nur, wenn du kein anderes Gerät hast, mit dem du dieses Gerät überprüfen kannst.";
+
+// MARK: - Home
+
+"home_empty_view_title" = "Willkommen bei Synod.im,\n%@";
+"home_empty_view_information" = "Deine sichere und dezentrale Messenger- und Chat-Lösung auf Basis des frei zugänglichen und etablierten Protokolls Matrix. Klicke auf den \"+\"-Button um loszulegen.";
