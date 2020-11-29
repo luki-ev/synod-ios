@@ -65,6 +65,7 @@ internal enum Asset {
     internal static let roomActionNotification = ImageAsset(name: "room_action_notification")
     internal static let roomActionPriorityHigh = ImageAsset(name: "room_action_priority_high")
     internal static let roomActionPriorityLow = ImageAsset(name: "room_action_priority_low")
+    internal static let homePlaceholderArtwork = ImageAsset(name: "home_placeholder_artwork")
     internal static let plusFloatingAction = ImageAsset(name: "plus_floating_action")
     internal static let closeBanner = ImageAsset(name: "close_banner")
     internal static let importFilesButton = ImageAsset(name: "import_files_button")
@@ -143,7 +144,8 @@ internal struct ImageAsset {
     #if os(iOS) || os(tvOS)
     let image = Image(named: name, in: bundle, compatibleWith: nil)
     #elseif os(macOS)
-    let image = bundle.image(forResource: NSImage.Name(name))
+    let name = NSImage.Name(self.name)
+    let image = (bundle == .main) ? NSImage(named: name) : bundle.image(forResource: name)
     #elseif os(watchOS)
     let image = Image(named: name)
     #endif
@@ -172,7 +174,11 @@ internal extension ImageAsset.Image {
 // swiftlint:disable convenience_type
 private final class BundleToken {
   static let bundle: Bundle = {
-    Bundle(for: BundleToken.self)
+    #if SWIFT_PACKAGE
+    return Bundle.module
+    #else
+    return Bundle(for: BundleToken.self)
+    #endif
   }()
 }
 // swiftlint:enable convenience_type

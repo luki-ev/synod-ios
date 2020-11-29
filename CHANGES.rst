@@ -1,3 +1,129 @@
+Changes in 1.1.1 (2020-11-24)
+=================================================
+
+✨ Features
+ * 
+
+🙌 Improvements
+ * Home: Add empty screen when there is nothing to display (#3823).
+
+🐛 Bugfix
+ * 
+
+⚠️ API Changes
+ * 
+
+🗣 Translations
+ * 
+    
+🧱 Build
+ * 
+
+Others
+ * 
+
+Improvements:
+ * Upgrade MatrixKit version ([v0.13.1](https://github.com/matrix-org/matrix-ios-kit/releases/tag/v0.13.1)).
+
+Changes in 1.1.0 (2020-11-17)
+=================================================
+
+✨ Features
+ * 
+
+🙌 Improvements
+ * Upgrade to Xcode 12 (#3712).
+ * Xcode 12: Make Xcode 12 and fastlane(xcodebuild) happy while some pods are not updated.
+ * Update Gemfile.lock.
+ * MXAnalyticsDelegate: Make it fully agnostic on tracked data.
+ * MXProfiler: Use this new module to track launch animation time reliably.
+ * KeyValueStore improvements.
+ * Jitsi: Support authenticated Jitsi widgets (#3655).
+
+🐛 Bugfix
+ * Fix analytics in order to track performance improvements.
+ * Fix long placeholder cropping in room input toolbar. Prevent long placeholder to be displayed on small devices (#3790).
+
+⚠️ API Changes
+ * Xcode 12 is now mandatory to build the project.
+ * CocoaPods 1.10.0 is mandatory.
+ * Remove MXDecryptionFailureDelegate in flavor of agnostic MXAnalyticsDelegate.
+
+🗣 Translations
+ * 
+    
+🧱 Build
+ * 
+
+Others
+ * 
+
+Improvements:
+ * Upgrade MatrixKit version ([v0.13.0](https://github.com/matrix-org/matrix-ios-kit/releases/tag/v0.13.0)).
+
+Changes in 1.0.18 (2020-10-27)
+=================================================
+
+✨ Features
+ * 
+
+🙌 Improvements
+ * Secure backup: Add possibility to not expose recovery key when creating a secure backup.
+ * BuildSettings: Centralise RoomInputToolbar compression mode setting.
+ * Update GBDeviceInfo to 6.4.0 (#3570).
+ * Update FlowCommoniOS to 1.9.0 (#3570).
+ * Update KeychainAccess to 4.2.1 (#3570).
+ * Update MatomoTracker to 7.2.2 (#3570).
+ * Update SwiftGen to 6.3.0 (#3570).
+ * Update SwiftLint to 0.40.3 (#3570).
+
+🐛 Bugfix
+ * Fix typos in UI
+
+⚠️ API Changes
+ *
+
+🗣 Translations
+ * 
+    
+🧱 Build
+ * 
+
+Others
+ * 
+
+Improvements:
+ * Upgrade MatrixKit version ([v0.12.26](https://github.com/matrix-org/matrix-ios-kit/releases/tag/v0.12.26)).
+
+Changes in 1.0.17 (2020-10-14)
+=================================================
+
+✨ Features
+ * 
+
+🙌 Improvements
+ * Device verification: Do not check for existing key backup after SSSS & Cross-Signing reset.
+ * Cross-signing: Detect when cross-signing keys have been changed.
+ * Make copying & pasting media configurable. 
+
+🐛 Bugfix
+ * 
+
+⚠️ API Changes
+ * 
+
+🗣 Translations
+ * 
+    
+🧱 Build
+ * 
+
+Others
+ * 
+
+Improvements:
+ * Upgrade MatrixKit version ([v0.12.25](https://github.com/matrix-org/matrix-ios-kit/releases/tag/v0.12.25)).
+
 Changes in 1.0.16 (2020-10-13)
 =================================================
 
@@ -73,6 +199,7 @@ Changes in 1.0.14 (2020-10-02)
  * Biometrics: Handle retry case.
  * Room: Remove membership events from room creation modal (#3679).
  * PIN: Fix layout on small screens.
+ * PIN: Fix code bypass on fast switching.
 
 ⚠️ API Changes
  * 

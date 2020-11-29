@@ -962,7 +962,7 @@ internal enum VectorL10n {
   internal static var deviceVerificationSelfVerifyWaitNewSignInTitle: String { 
     return VectorL10n.tr("Vector", "device_verification_self_verify_wait_new_sign_in_title") 
   }
-  /// If you can't accessing an existing session
+  /// If you can't access an existing session
   internal static var deviceVerificationSelfVerifyWaitRecoverSecretsAdditionalInformation: String { 
     return VectorL10n.tr("Vector", "device_verification_self_verify_wait_recover_secrets_additional_information") 
   }
@@ -986,7 +986,7 @@ internal enum VectorL10n {
   internal static var deviceVerificationStartTitle: String { 
     return VectorL10n.tr("Vector", "device_verification_start_title") 
   }
-  /// Nothing appearing? Not all clients supports interactive verification yet. Use legacy verification.
+  /// Nothing appearing? Not all clients support interactive verification yet. Use legacy verification.
   internal static var deviceVerificationStartUseLegacy: String { 
     return VectorL10n.tr("Vector", "device_verification_start_use_legacy") 
   }
@@ -1345,6 +1345,14 @@ internal enum VectorL10n {
   /// COMMUNITIES
   internal static var groupSection: String { 
     return VectorL10n.tr("Vector", "group_section") 
+  }
+  /// The all-in-one secure chat app for teams, friends and organisations. Tap the "+" button below to add people and rooms.
+  internal static var homeEmptyViewInformation: String { 
+    return VectorL10n.tr("Vector", "home_empty_view_information") 
+  }
+  /// Welcome to Element,\n%@
+  internal static func homeEmptyViewTitle(_ p1: String) -> String {
+    return VectorL10n.tr("Vector", "home_empty_view_title", p1)
   }
   /// Could not connect to the homeserver.
   internal static var homeserverConnectionLost: String { 
@@ -3397,6 +3405,14 @@ internal enum VectorL10n {
   /// Enter a security phrase only you know, used to secure secrets on your server.
   internal static var secretsSetupRecoveryPassphraseInformation: String { 
     return VectorL10n.tr("Vector", "secrets_setup_recovery_passphrase_information") 
+  }
+  /// Remember your Security Phrase. It can be used to unlock your encrypted messages & data.
+  internal static var secretsSetupRecoveryPassphraseSummaryInformation: String { 
+    return VectorL10n.tr("Vector", "secrets_setup_recovery_passphrase_summary_information") 
+  }
+  /// Save your Security Phrase
+  internal static var secretsSetupRecoveryPassphraseSummaryTitle: String { 
+    return VectorL10n.tr("Vector", "secrets_setup_recovery_passphrase_summary_title") 
   }
   /// Set a Security Phrase
   internal static var secretsSetupRecoveryPassphraseTitle: String { 

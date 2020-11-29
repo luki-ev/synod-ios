@@ -34,6 +34,7 @@
 
 #import "BugReportViewController.h"
 #import "RoomKeyRequestViewController.h"
+#import "DecryptionFailureTracker.h"
 
 #import <MatrixKit/MatrixKit.h>
 
@@ -203,7 +204,6 @@ NSString *const AppDelegateUniversalLinkDidChangeNotification = @"AppDelegateUni
      The launch animation container view
      */
     UIView *launchAnimationContainerView;
-    NSDate *launchAnimationStart;
 }
 
 @property (strong, nonatomic) UIAlertController *mxInAppNotification;
@@ -226,6 +226,8 @@ NSString *const AppDelegateUniversalLinkDidChangeNotification = @"AppDelegateUni
 
 @property (nonatomic, weak) id userDidSignInOnNewDeviceObserver;
 @property (weak, nonatomic) UIAlertController *userNewSignInAlertController;
+
+@property (nonatomic, weak) id userDidChangeCrossSigningKeysObserver;
 
 /**
  Related push notification service instance. Will be created when launch finished.
@@ -451,9 +453,15 @@ NSString *const AppDelegateUniversalLinkDidChangeNotification = @"AppDelegateUni
     _handleSelfVerificationRequest = YES;
     
     // Configure our analytics. It will indeed start if the option is enabled
-    [MXSDKOptions sharedInstance].analyticsDelegate = [Analytics sharedInstance];
+    Analytics *analytics = [Analytics sharedInstance];
+    [MXSDKOptions sharedInstance].analyticsDelegate = analytics;
     [DecryptionFailureTracker sharedInstance].delegate = [Analytics sharedInstance];
-    [[Analytics sharedInstance] start];
+    
+    MXBaseProfiler *profiler = [MXBaseProfiler new];
+    profiler.analytics = analytics;
+    [MXSDKOptions sharedInstance].profiler = profiler;
+    
+    [analytics start];
 
     self.localAuthenticationService = [[LocalAuthenticationService alloc] initWithPinCodePreferences:[PinCodePreferences shared]];
 
@@ -585,6 +593,9 @@ NSString *const AppDelegateUniversalLinkDidChangeNotification = @"AppDelegateUni
     
     [self.pushNotificationService applicationDidEnterBackground];
     
+    // Pause profiling
+    [MXSDKOptions.sharedInstance.profiler pause];
+    
     // Analytics: Force to send the pending actions
     [[DecryptionFailureTracker sharedInstance] dispatch];
     [[Analytics sharedInstance] dispatch];
@@ -596,6 +607,8 @@ NSString *const AppDelegateUniversalLinkDidChangeNotification = @"AppDelegateUni
     
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
 
+    [MXSDKOptions.sharedInstance.profiler resume];
+    
     // Force each session to refresh here their publicised groups by user dictionary.
     // When these publicised groups are retrieved for a user, they are cached and reused until the app is backgrounded and enters in the foreground again
     for (MXSession *session in mxSessionArray)
@@ -1096,6 +1109,9 @@ NSString *const AppDelegateUniversalLinkDidChangeNotification = @"AppDelegateUni
 
 - (void)pushNotificationService:(PushNotificationService *)pushNotificationService shouldNavigateToRoomWithId:(NSString *)roomId
 {
+    [MXSDKOptions.sharedInstance.profiler startMeasuringTaskWithName:AnalyticsNoficationsTimeToDisplayContent
+                                                            category:AnalyticsNoficationsCategory];
+    
     _lastNavigatedRoomIdFromPush = roomId;
     [self navigateToRoomById:roomId];
 }
@@ -1773,6 +1789,8 @@ NSString *const AppDelegateUniversalLinkDidChangeNotification = @"AppDelegateUni
             // Register to user new device sign in notification
             [self registerUserDidSignInOnNewDeviceNotificationForSession:mxSession];
             
+            [self registerDidChangeCrossSigningKeysNotificationForSession:mxSession];
+            
             // Register to new key verification request
             [self registerNewRequestNotificationForSession:mxSession];
             
@@ -2402,7 +2420,9 @@ NSString *const AppDelegateUniversalLinkDidChangeNotification = @"AppDelegateUni
         [window addSubview:launchLoadingView];
         
         launchAnimationContainerView = launchLoadingView;
-        launchAnimationStart = [NSDate date];
+        
+        [MXSDKOptions.sharedInstance.profiler startMeasuringTaskWithName:kMXAnalyticsStartupLaunchScreen
+                                                        category:kMXAnalyticsStartupCategory];
     }
 }
 
@@ -2410,14 +2430,14 @@ NSString *const AppDelegateUniversalLinkDidChangeNotification = @"AppDelegateUni
 {
     if (launchAnimationContainerView)
     {
-        NSTimeInterval duration = [[NSDate date] timeIntervalSinceDate:launchAnimationStart];
-        NSLog(@"[AppDelegate] hideLaunchAnimation: LaunchAnimation was shown for %.3fms", duration * 1000);
-        
-        // Track it on our analytics
-        [[Analytics sharedInstance] trackLaunchScreenDisplayDuration:duration];
-        
-        // TODO: Send durationMs to Piwik
-        // Such information should be the same on all platforms
+        id<MXProfiler> profiler = MXSDKOptions.sharedInstance.profiler;
+        MXTaskProfile *launchTaskProfile = [profiler taskProfileWithName:kMXAnalyticsStartupLaunchScreen category:kMXAnalyticsStartupCategory];
+        if (launchTaskProfile)
+        {
+            [profiler stopMeasuringTaskWithProfile:launchTaskProfile];
+            
+            NSLog(@"[AppDelegate] hideLaunchAnimation: LaunchAnimation was shown for %.3fms", launchTaskProfile.duration * 1000);
+        }
         
         [self->launchAnimationContainerView removeFromSuperview];
         self->launchAnimationContainerView = nil;
@@ -4224,9 +4244,11 @@ NSString *const AppDelegateUniversalLinkDidChangeNotification = @"AppDelegateUni
 
 - (void)presentNewSignInAlertForDevice:(MXDevice*)device inSession:(MXSession*)session
 {
+    NSLog(@"[AppDelegate] presentNewSignInAlertForDevice: %@", device.deviceId);
+    
     if (self.userNewSignInAlertController)
     {
-        return;
+        [self.userNewSignInAlertController dismissViewControllerAnimated:NO completion:nil];
     }
     
     NSString *deviceInfo;
@@ -4242,7 +4264,6 @@ NSString *const AppDelegateUniversalLinkDidChangeNotification = @"AppDelegateUni
     
     NSString *alertMessage = [NSString stringWithFormat:NSLocalizedStringFromTable(@"device_verification_self_verify_alert_message", @"Vector", nil), deviceInfo];
     
-    
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:NSLocalizedStringFromTable(@"device_verification_self_verify_alert_title", @"Vector", nil)
                                                                    message:alertMessage
                                                             preferredStyle:UIAlertControllerStyleAlert];
@@ -4250,18 +4271,61 @@ NSString *const AppDelegateUniversalLinkDidChangeNotification = @"AppDelegateUni
     [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"device_verification_self_verify_alert_validate_action", @"Vector", nil)
                                               style:UIAlertActionStyleDefault
                                             handler:^(UIAlertAction * action) {
-                                                
-                                                [self presentSelfVerificationForOtherDeviceId:device.deviceId inSession:session];
-                                            }]];
+        self.userNewSignInAlertController = nil;
+        [self presentSelfVerificationForOtherDeviceId:device.deviceId inSession:session];
+    }]];
     
     [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"later", @"Vector", nil)
-                                               style:UIAlertActionStyleCancel
-                                             handler:nil]];
+                                              style:UIAlertActionStyleCancel
+                                            handler:^(UIAlertAction * action) {
+        self.userNewSignInAlertController = nil;
+    }]];
      
     [self presentViewController:alert animated:YES completion:nil];
     
     self.userNewSignInAlertController = alert;
 }
+
+
+#pragma mark - Cross-signing reset detection
+
+- (void)registerDidChangeCrossSigningKeysNotificationForSession:(MXSession*)session
+{
+    MXCrossSigning *crossSigning = session.crypto.crossSigning;
+    
+    if (!crossSigning)
+    {
+        return;
+    }
+    
+    MXWeakify(self);
+
+    self.userDidChangeCrossSigningKeysObserver = [NSNotificationCenter.defaultCenter addObserverForName:MXCrossSigningDidChangeCrossSigningKeysNotification
+                                                                                                 object:crossSigning
+                                                                                                  queue:[NSOperationQueue mainQueue]
+                                                                                             usingBlock:^(NSNotification *notification)
+                                                  {
+                                                  
+         MXStrongifyAndReturnIfNil(self);
+               
+        NSLog(@"[AppDelegate] registerDidChangeCrossSigningKeysNotificationForSession");
+        
+        if (self.userNewSignInAlertController)
+        {
+            NSLog(@"[AppDelegate] registerDidChangeCrossSigningKeysNotificationForSession: Hide NewSignInAlertController");
+            
+            [self.userNewSignInAlertController dismissViewControllerAnimated:NO completion:^{
+                [self.masterTabBarController presentVerifyCurrentSessionAlertIfNeededWithSession:session];
+            }];
+            self.userNewSignInAlertController = nil;
+        }
+        else
+        {
+            [self.masterTabBarController presentVerifyCurrentSessionAlertIfNeededWithSession:session];
+        }
+    }];
+}
+
 
 #pragma mark - Complete security
 
