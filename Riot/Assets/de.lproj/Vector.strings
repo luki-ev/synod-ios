@@ -1262,3 +1262,8 @@
 "favourites_empty_view_information" = "Um einen Lieblingschat hinzuzufügen, halte diesen gedrückt und wähle den Stern aus. Du findest deine Lieblingschats gesammelt hier.";
 "home_empty_view_information" = "Deine sichere und dezentrale Messenger- und Chat-Lösung auf Basis des frei zugänglichen und etablierten Protokolls Matrix. Klicke auf den \"+\"-Button um loszulegen.";
 "rooms_empty_view_information" = "Noch keine Chat-Räume vorhanden. Tippe auf das +, um einem Raum beizutreten oder einen neuen zu erstellen.";
+
+// MARK: - Invite friends
+
+"invite_friends_action" = "Personen zu %@ einladen";
+"invite_friends_share_text" = "Hallo! Du erreichst mich auf %@ unter: %@";
