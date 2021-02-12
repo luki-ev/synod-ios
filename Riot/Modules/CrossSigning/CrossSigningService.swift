@@ -16,13 +16,30 @@
 
 import Foundation
 
+enum CrossSigningServiceError: Int, Error {
+    case authenticationRequired
+    case unknown
+}
+
+extension CrossSigningServiceError: CustomNSError {
+    public static let errorDomain = "CrossSigningService"
+
+    public var errorCode: Int {
+        return Int(rawValue)
+    }
+
+    public var errorUserInfo: [String: Any] {
+        return [:]
+    }
+}
+
 @objcMembers
 final class CrossSigningService: NSObject {
     
     // MARK - Properties
     
     private var supportSetupKeyVerificationByUser: [String: Bool] = [:] // Cached server response
-    private var authenticationSessionService: AuthenticationSessionService?
+    private var userInteractiveAuthenticationService: UserInteractiveAuthenticationService?
     
     // MARK - Public
     
@@ -43,13 +60,13 @@ final class CrossSigningService: NSObject {
             return nil
         }
         
-        let authenticationSessionService = AuthenticationSessionService(session: session)
+        let userInteractiveAuthenticationService = UserInteractiveAuthenticationService(session: session)
         
-        self.authenticationSessionService = authenticationSessionService
+        self.userInteractiveAuthenticationService = userInteractiveAuthenticationService
                 
-        let authenticationSessionParameters = self.setupCrossSigningAuthenticationSessionParameters()
+        let request = self.setupCrossSigningRequest()
         
-        return authenticationSessionService.canAuthenticate(for: authenticationSessionParameters) { (result) in
+        return userInteractiveAuthenticationService.canAuthenticate(with: request) { (result) in
             switch result {
             case .success(let succeeded):
                 success(succeeded)
@@ -59,8 +76,41 @@ final class CrossSigningService: NSObject {
         }
     }
     
-    func setupCrossSigningAuthenticationSessionParameters() -> AuthenticationSessionParameters {
+    func setupCrossSigningRequest() -> AuthenticatedEndpointRequest {
         let path = "\(kMXAPIPrefixPathUnstable)/keys/device_signing/upload"
-        return AuthenticationSessionParameters(path: path, httpMethod: "POST")
+        return AuthenticatedEndpointRequest(path: path, httpMethod: "POST")
+    }
+    
+    /// Setup cross-signing without authentication. Useful when a grace period is enabled.
+    @discardableResult
+    func setupCrossSigningWithoutAuthentication(for session: MXSession, success: @escaping (() -> Void), failure: @escaping ((Error) -> Void)) -> MXHTTPOperation? {
+        
+        guard let crossSigning = session.crypto.crossSigning else {
+            failure(CrossSigningServiceError.unknown)
+            return nil
+        }
+        
+        let userInteractiveAuthenticationService = UserInteractiveAuthenticationService(session: session)
+        self.userInteractiveAuthenticationService = userInteractiveAuthenticationService
+                        
+        let request = self.setupCrossSigningRequest()
+        
+        return userInteractiveAuthenticationService.authenticatedEndpointStatus(for: request) { result in
+            switch result {
+            case .success(let authenticatedEnpointStatus):
+                switch authenticatedEnpointStatus {
+                case .authenticationNeeded:
+                    failure(CrossSigningServiceError.authenticationRequired)
+                case .authenticationNotNeeded:
+                    crossSigning.setup(withAuthParams: [:]) {
+                        success()
+                    } failure: { error in
+                        failure(error)
+                    }
+                }
+            case .failure(let error):
+                failure(error)
+            }
+        }
     }
 }
