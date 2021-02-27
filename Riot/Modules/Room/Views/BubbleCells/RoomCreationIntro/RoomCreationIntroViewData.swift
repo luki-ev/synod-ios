@@ -1,9 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>FILEHEADER</key>
-    <string> 
+// 
 // Copyright 2020 New Vector Ltd
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,6 +12,18 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//</string>
-</dict>
-</plist>
+//
+
+import Foundation
+
+enum DiscussionType {
+    case directMessage
+    case multipleDirectMessage
+    case room(topic: String?)
+}
+
+struct RoomCreationIntroViewData {
+    let dicussionType: DiscussionType
+    let roomDisplayName: String
+    let avatarViewData: RoomAvatarViewData
+}

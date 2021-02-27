@@ -1,0 +1,44 @@
+// 
+// Copyright 2021 Vector Creations Ltd
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+
+// App identity
+BUNDLE_DISPLAY_NAME = Synod.im
+BASE_BUNDLE_IDENTIFIER = im.synod
+APPLICATION_GROUP_IDENTIFIER = group.im.synod
+APPLICATION_SCHEME = synod
+
+// Version
+MARKETING_VERSION = 1.2.3
+CURRENT_PROJECT_VERSION = 1.2.3
+
+
+// Team
+DEVELOPMENT_TEAM = 87B2KYDCTV
+
+
+// Provisioning profiles
+RIOT_PROVISIONING_PROFILE_SPECIFIER = Synod App Store
+RIOT_PROVISIONING_PROFILE = 114e2dcc-e15a-4781-b7bc-abbbe46e8921
+
+NSE_PROVISIONING_PROFILE_SPECIFIER = "Synod NSE: App Store"
+NSE_PROVISIONING_PROFILE = 95ddf9d4-399c-4b78-b393-2095a241af78
+
+SHARE_EXTENSION_PROVISIONING_PROFILE_SPECIFIER = "Synod Share Extension: App Store"
+SHARE_EXTENSION_PROVISIONING_PROFILE = e29068e9-a891-4327-8330-8315bcfae139
+
+SIRI_INTENTS_PROVISIONING_PROFILE_SPECIFIER = "Synod Siri Intents: App Store"
+SIRI_INTENTS_PROVISIONING_PROFILE = 36494231-35d1-4fc8-8905-64ca70943d46
