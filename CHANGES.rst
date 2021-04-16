@@ -1,3 +1,85 @@
+Changes in 1.3.3 (2021-04-16)
+=================================================
+
+✨ Features
+ * 
+
+🙌 Improvements
+ * 
+
+🐛 Bugfix
+ * 
+
+⚠️ API Changes
+ * 
+
+🗣 Translations
+ * 
+    
+🧱 Build
+ * 
+
+Others
+ * 
+
+Improvements:
+ * Upgrade MatrixKit version ([v0.14.9](https://github.com/matrix-org/matrix-ios-kit/releases/tag/v0.14.9)).
+
+Changes in 1.3.2 (2021-04-16)
+=================================================
+
+✨ Features
+ * 
+
+🙌 Improvements
+ * 
+
+🐛 Bugfix
+ * Self-verification: Fix compatibility with Element-Web (#4217).
+ * Notifications: Fix sender display name that can miss (#4222). 
+
+⚠️ API Changes
+ * 
+
+🗣 Translations
+ * 
+    
+🧱 Build
+ * 
+
+Others
+ * 
+
+Improvements:
+ * Upgrade MatrixKit version ([v0.14.9](https://github.com/matrix-org/matrix-ios-kit/releases/tag/v0.14.9)).
+
+Changes in 1.3.1 (2021-04-14)
+=================================================
+
+✨ Features
+ * 
+
+🙌 Improvements
+ * 
+
+🐛 Bugfix
+ * 
+
+⚠️ API Changes
+ * 
+
+🗣 Translations
+ * 
+    
+🧱 Build
+ * 
+
+Others
+ * 
+
+Improvements:
+ * Upgrade MatrixKit version ([v0.14.8](https://github.com/matrix-org/matrix-ios-kit/releases/tag/v0.14.8)).
+
 Changes in 1.3.0 (2021-04-09)
 =================================================
 
