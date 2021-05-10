@@ -149,7 +149,7 @@
     self.localPreviewContainerView.clipsToBounds = YES;
 
     // Fix for https://github.com/vector-im/riot-ios/issues/2458
-    self.localPreviewContainerView.transform = CGAffineTransformMakeScale(-1.0, 1.0);
+    // self.localPreviewContainerView.transform = CGAffineTransformMakeScale(-1.0, 1.0);
 }
 
 - (void)viewWillDisappear:(BOOL)animated
