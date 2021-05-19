@@ -1,3 +1,54 @@
+Changes to be released in next version
+=================================================
+
+✨ Features
+ * 
+
+🙌 Improvements
+ * 
+
+🐛 Bugfix
+ * RecentsDataSource: Present the secure backup banner only if key backup is disabled.
+
+⚠️ API Changes
+ * 
+
+🗣 Translations
+ * 
+    
+🧱 Build
+ * 
+
+Others
+ * 
+
+Changes in 1.3.8 (2021-05-17)
+=================================================
+
+✨ Features
+ * 
+
+🙌 Improvements
+ * 
+
+🐛 Bugfix
+ * RecentsDataSource: Do not display secure backup banner when keys upload is in process.
+
+⚠️ API Changes
+ * 
+
+🗣 Translations
+ * 
+    
+🧱 Build
+ * 
+
+Others
+ * 
+
+Improvements:
+
+
 Changes in 1.3.7 (2021-05-12)
 =================================================
 
