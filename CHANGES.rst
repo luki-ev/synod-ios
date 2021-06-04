@@ -1,4 +1,37 @@
-Changes to be released in next version
+Changes in 1.4.0 (2021-06-03)
+=================================================
+
+✨ Features
+ * 
+
+🙌 Improvements
+ * Crypto: Do not decrypt synchronously. It asynchronously happens upstream now (#4306). 
+ * Navigation: Start decoupling view controllers managed by MasterTabBarController (#3596 and #3618).
+ * Jitsi: Include optional server name field on JitsiJWTPayloadContextMatrix.
+ * CallPresenter: Add more logs for group calls.
+ * Logging: Adopted MXLog throughout the application (vector-im/element-ios/issues/4351).
+
+🐛 Bugfix
+ * buildRelease.sh: Make bundler operations in the cloned repository folder.
+ * VoIP: Fix call bar layout issue for landscape.
+
+⚠️ API Changes
+ * 
+
+🗣 Translations
+ * Fix missing translation files for Icelandic.
+ * Enable Esperanto, Portuguese (Brazil), Kabyle, Norwegian Bokmål (nb), Swedish, Japanese and Welsh.
+    
+🧱 Build
+ * 
+
+Others
+ * 
+
+Improvements:
+ * Upgrade MatrixKit version ([v0.15.0](https://github.com/matrix-org/matrix-ios-kit/releases/tag/v0.15.0)).
+
+Changes in 1.3.9 (2021-05-18)
 =================================================
 
 ✨ Features
@@ -21,6 +54,9 @@ Changes to be released in next version
 
 Others
  * 
+
+Improvements:
+
 
 Changes in 1.3.8 (2021-05-17)
 =================================================
