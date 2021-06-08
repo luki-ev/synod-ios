@@ -1,3 +1,28 @@
+Changes in 1.4.1 (2021-06-08)
+=================================================
+
+✨ Features
+ * 
+
+🙌 Improvements
+ * 
+
+🐛 Bugfix
+ * SettingsViewController: Fix crash when changing the app language (#4377).
+ * UserSessionsService: Fix room lists lost after a reset cache (#4395).
+
+⚠️ API Changes
+ * 
+
+🗣 Translations
+ * 
+    
+🧱 Build
+ * 
+
+Others
+ * 
+
 Changes in 1.4.0 (2021-06-03)
 =================================================
 

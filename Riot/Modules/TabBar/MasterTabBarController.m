@@ -34,7 +34,7 @@
 @interface MasterTabBarController () <AuthenticationViewControllerDelegate>
 {
     // Array of `MXSession` instances.
-    NSMutableArray *mxSessionArray;    
+    NSMutableArray<MXSession*> *mxSessionArray;    
     
     // Tell whether the authentication screen is preparing.
     BOOL isAuthViewControllerPreparing;
@@ -285,7 +285,7 @@
 
 #pragma mark -
 
-- (NSArray*)mxSessions
+- (NSArray<MXSession*>*)mxSessions
 {
     return [NSArray arrayWithArray:mxSessionArray];
 }
@@ -340,7 +340,7 @@
         [self.groupsViewController displayList:groupsDataSource];
         
         // Check whether there are others sessions
-        NSArray* mxSessions = self.mxSessions;
+        NSArray<MXSession*>* mxSessions = self.mxSessions;
         if (mxSessions.count > 1)
         {
             for (MXSession *mxSession in mxSessions)
@@ -357,6 +357,12 @@
 
 - (void)addMatrixSession:(MXSession *)mxSession
 {
+    if ([mxSessionArray containsObject:mxSession])
+    {
+        MXLogDebug(@"MasterTabBarController already has %@ in mxSessionArray", mxSession)
+        return;
+    }
+    
     // Check whether the controller's view is loaded into memory.
     if (self.homeViewController)
     {
@@ -395,6 +401,12 @@
 
 - (void)removeMatrixSession:(MXSession *)mxSession
 {
+    if (![mxSessionArray containsObject:mxSession])
+    {
+        MXLogDebug(@"MasterTabBarController does not contain %@ in mxSessionArray", mxSession)
+        return;
+    }
+    
     [recentsDataSource removeMatrixSession:mxSession];
     
     // Check whether there are others sessions
