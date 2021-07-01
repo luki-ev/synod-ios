@@ -28,7 +28,11 @@
 
 #import "IncomingCallView.h"
 
-@interface CallViewController () <PictureInPicturable, DialpadViewControllerDelegate, CallTransferMainViewControllerDelegate>
+@interface CallViewController () <
+PictureInPicturable,
+DialpadViewControllerDelegate,
+CallTransferMainViewControllerDelegate,
+CallAudioRouteMenuViewDelegate>
 {
     // Current alert (if any).
     UIAlertController *currentAlert;
@@ -37,10 +41,15 @@
     BOOL promptForStunServerFallback;
 }
 
+@property (nonatomic, weak) IBOutlet UIView *pipViewContainer;
+
 @property (nonatomic, strong) id<Theme> overriddenTheme;
 @property (nonatomic, assign) BOOL inPiP;
+@property (nonatomic, strong) CallPiPView *pipView;
 
 @property (nonatomic, strong) CustomSizedPresentationController *customSizedPresentationController;
+@property (nonatomic, strong) SlidingModalPresenter *slidingModalPresenter;
+@property (nonatomic, strong) CallAudioRouteMenuView *audioRoutesMenuView;
 
 @end
 
@@ -96,7 +105,8 @@
     
     UIImage *moreButtonImage = [UIImage imageNamed:@"call_more_icon"];
     
-    [self.moreButton setImage:moreButtonImage forState:UIControlStateNormal];
+    [self.moreButtonForVoice setImage:moreButtonImage forState:UIControlStateNormal];
+    [self.moreButtonForVideo setImage:moreButtonImage forState:UIControlStateNormal];
     
     // Hang up
     
@@ -222,11 +232,69 @@
     return incomingCallView;
 }
 
+- (void)showAudioDeviceOptions
+{
+    MXiOSAudioOutputRouter *router = self.mxCall.audioOutputRouter;
+    if (router.isAnyExternalDeviceConnected)
+    {
+        self.slidingModalPresenter = [SlidingModalPresenter new];
+        
+        _audioRoutesMenuView = [[CallAudioRouteMenuView alloc] initWithRoutes:router.availableOutputRoutes
+                                                                 currentRoute:router.currentRoute];
+        _audioRoutesMenuView.delegate = self;
+        
+        [self.slidingModalPresenter presentView:_audioRoutesMenuView
+                                           from:self
+                                       animated:true
+                                        options:SlidingModalPresenter.CenterInScreenOption
+                                     completion:nil];
+    }
+    else
+    {
+        //  toggle between built-in and loud speakers
+        switch (router.currentRoute.routeType)
+        {
+            case MXiOSAudioOutputRouteTypeBuiltIn:
+                [router changeCurrentRouteTo:router.loudSpeakersRoute];
+                break;
+            case MXiOSAudioOutputRouteTypeLoudSpeakers:
+                [router changeCurrentRouteTo:router.builtInRoute];
+                break;
+            default:
+                break;
+        }
+        
+    }
+}
+
+- (void)configureSpeakerButton
+{
+    switch (self.mxCall.audioOutputRouter.currentRoute.routeType)
+    {
+        case MXiOSAudioOutputRouteTypeBuiltIn:
+            [self.speakerButton setImage:[UIImage imageNamed:@"call_speaker_off_icon"]
+                                forState:UIControlStateNormal];
+            break;
+        case MXiOSAudioOutputRouteTypeLoudSpeakers:
+            [self.speakerButton setImage:[UIImage imageNamed:@"call_speaker_on_icon"]
+                                forState:UIControlStateNormal];
+            break;
+        case MXiOSAudioOutputRouteTypeExternalWired:
+        case MXiOSAudioOutputRouteTypeExternalBluetooth:
+        case MXiOSAudioOutputRouteTypeExternalCar:
+            [self.speakerButton setImage:[UIImage imageNamed:@"call_speaker_external_icon"]
+                                forState:UIControlStateNormal];
+            break;
+    }
+}
+
 #pragma mark - MXCallDelegate
 
 - (void)call:(MXCall *)call stateDidChange:(MXCallState)state reason:(MXEvent *)event
 {
     [super call:call stateDidChange:state reason:event];
+    
+    [self configurePiPView];
 
     [self checkStunServerFallbackWithCallState:state];
 }
@@ -382,6 +450,23 @@
     return _overriddenTheme;
 }
 
+- (CallPiPView *)pipView
+{
+    if (_pipView == nil)
+    {
+        _pipView = [CallPiPView instantiateWithSession:self.mainSession];
+        [_pipView updateWithTheme:self.overriddenTheme];
+    }
+    return _pipView;
+}
+
+- (void)setMxCallOnHold:(MXCall *)mxCallOnHold
+{
+    [super setMxCallOnHold:mxCallOnHold];
+    
+    [self configurePiPView];
+}
+
 - (UIImage*)picturePlaceholder
 {
     CGFloat fontSize = floor(self.callerImageViewWidthConstraint.constant * 0.7);
@@ -505,11 +590,19 @@
         self.callStatusLabel.hidden = YES;
         self.localPreviewContainerView.hidden = YES;
         self.localPreviewActivityView.hidden = YES;
+        
+        if (self.pipViewContainer.subviews.count == 0)
+        {
+            [self.pipViewContainer vc_addSubViewMatchingParent:self.pipView];
+        }
+        [self configurePiPView];
+        self.pipViewContainer.hidden = NO;
     }
     else
     {
-        self.localPreviewContainerView.hidden = NO;
-        self.callerImageView.hidden = NO;
+        self.pipViewContainer.hidden = YES;
+        self.localPreviewContainerView.hidden = !self.mxCall.isVideoCall;
+        self.callerImageView.hidden = self.mxCall.isVideoCall && self.mxCall.state == MXCallStateConnected;
         self.callerNameLabel.hidden = NO;
         self.callStatusLabel.hidden = NO;
         
@@ -647,16 +740,42 @@
     [viewController dismissViewControllerAnimated:YES completion:nil];
 }
 
+#pragma mark - PiP
+
+- (void)configurePiPView
+{
+    if (self.inPiP)
+    {
+        [self.pipView configureWithCall:self.mxCall
+                                   peer:self.peer
+                             onHoldCall:self.mxCallOnHold
+                             onHoldPeer:self.peerOnHold];
+    }
+}
+
 #pragma mark - PictureInPicturable
 
-- (void)enterPiP
+- (void)didEnterPiP
 {
     self.inPiP = YES;
 }
 
-- (void)exitPiP
+- (void)willExitPiP
+{
+    self.pipViewContainer.hidden = YES;
+}
+
+- (void)didExitPiP
 {
     self.inPiP = NO;
+}
+
+#pragma mark - CallAudioRouteMenuViewDelegate
+
+- (void)callAudioRouteMenuView:(CallAudioRouteMenuView *)view didSelectRoute:(MXiOSAudioOutputRoute *)route
+{
+    [self.mxCall.audioOutputRouter changeCurrentRouteTo:route];
+    [self.slidingModalPresenter dismissWithAnimated:YES completion:nil];
 }
 
 @end
