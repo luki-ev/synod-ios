@@ -297,7 +297,7 @@ final class BuildSettings: NSObject {
     
     // MARK: - Voice Message
     
-    static let voiceMessagesEnabled = false
+    static let voiceMessagesEnabled = true
     
     // MARK: - Notifications
     static let decryptNotificationsByDefault: Bool = true
