@@ -155,7 +155,7 @@ final class BuildSettings: NSObject {
     
     
     // MARK: - Bug report
-    static let bugReportEndpointUrlString = "https://synod.im/bugreports"
+    static let bugReportEndpointUrlString = "https://bugs.synod.im"
     // Use the name allocated by the bug report server
     static let bugReportApplicationId = "synod-ios"
     
@@ -232,7 +232,7 @@ final class BuildSettings: NSObject {
     static let settingsScreenShowLabSettings: Bool = true
     static let settingsScreenAllowChangingRageshakeSettings: Bool = false
     static let settingsScreenAllowChangingCrashUsageDataSettings: Bool = false
-    static let settingsScreenAllowBugReportingManually: Bool = false
+    static let settingsScreenAllowBugReportingManually: Bool = true
     static let settingsScreenAllowDeactivatingAccount: Bool = true
     static let settingsScreenShowChangePassword:Bool = true
     static let settingsScreenShowInviteFriends:Bool = true
