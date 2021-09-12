@@ -228,6 +228,7 @@ final class BuildSettings: NSObject {
     static let settingsScreenShowThreepidExplanatory: Bool = true
     static let settingsScreenShowDiscoverySettings: Bool = false
     static let settingsScreenAllowIdentityServerConfig: Bool = false
+    static let settingsScreenShowConfirmMediaSize: Bool = true
     static let settingsScreenShowAdvancedSettings: Bool = true
     static let settingsScreenShowLabSettings: Bool = true
     static let settingsScreenAllowChangingRageshakeSettings: Bool = false
