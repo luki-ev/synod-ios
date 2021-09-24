@@ -4144,7 +4144,7 @@ public class VectorL10n: NSObject {
     return VectorL10n.tr("Vector", "settings_copyright") 
   }
   /// https://synod.im/copyright
-  internal static var settingsCopyrightUrl: String { 
+  public static var settingsCopyrightUrl: String { 
     return VectorL10n.tr("Vector", "settings_copyright_url") 
   }
   /// Encrypt to verified sessions only
@@ -4564,7 +4564,7 @@ public class VectorL10n: NSObject {
     return VectorL10n.tr("Vector", "settings_privacy_policy") 
   }
   /// https://synod.im/privacy
-  internal static var settingsPrivacyPolicyUrl: String { 
+  public static var settingsPrivacyPolicyUrl: String { 
     return VectorL10n.tr("Vector", "settings_privacy_policy_url") 
   }
   /// Profile Picture
@@ -4644,7 +4644,7 @@ public class VectorL10n: NSObject {
     return VectorL10n.tr("Vector", "settings_term_conditions") 
   }
   /// https://synod.im/terms
-  internal static var settingsTermConditionsUrl: String { 
+  public static var settingsTermConditionsUrl: String { 
     return VectorL10n.tr("Vector", "settings_term_conditions_url") 
   }
   /// Third-party Notices
