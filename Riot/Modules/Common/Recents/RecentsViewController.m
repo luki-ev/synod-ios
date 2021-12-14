@@ -24,15 +24,13 @@
 
 #import "MXRoom+Riot.h"
 
-#import <MatrixKit/MatrixKit.h>
-
 #import "RoomViewController.h"
 
 #import "InviteRecentTableViewCell.h"
 #import "DirectoryRecentTableViewCell.h"
 #import "RoomIdOrAliasTableViewCell.h"
 
-#import "Riot-Swift.h"
+#import "GeneratedInterface-Swift.h"
 
 NSString *const RecentsViewControllerDataReadyNotification = @"RecentsViewControllerDataReadyNotification";
 
@@ -2052,6 +2050,11 @@ NSString *const RecentsViewControllerDataReadyNotification = @"RecentsViewContro
 
 - (void)scrollToTheTopTheNextRoomWithMissedNotificationsInSection:(NSInteger)section
 {
+    if (section < 0)
+    {
+        return;
+    }
+    
     UITableViewCell *firstVisibleCell;
     NSIndexPath *firstVisibleCellIndexPath;
     

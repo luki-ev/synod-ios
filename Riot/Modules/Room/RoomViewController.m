@@ -122,7 +122,6 @@
 #import "StickerPickerViewController.h"
 
 #import "EventFormatter.h"
-#import <MatrixKit/MXKSlashCommands.h>
 
 #import "SettingsViewController.h"
 #import "SecurityViewController.h"
@@ -131,7 +130,7 @@
 
 #import "MXSDKOptions.h"
 
-#import "Riot-Swift.h"
+#import "GeneratedInterface-Swift.h"
 
 NSNotificationName const RoomCallTileTappedNotification = @"RoomCallTileTappedNotification";
 NSNotificationName const RoomGroupCallTileTappedNotification = @"RoomGroupCallTileTappedNotification";
@@ -415,6 +414,10 @@ const NSTimeInterval kResizeComposerAnimationDuration = .05;
     [self.bubblesTableView registerClass:VoiceMessageBubbleCell.class forCellReuseIdentifier:VoiceMessageBubbleCell.defaultReuseIdentifier];
     [self.bubblesTableView registerClass:VoiceMessageWithoutSenderInfoBubbleCell.class forCellReuseIdentifier:VoiceMessageWithoutSenderInfoBubbleCell.defaultReuseIdentifier];
     [self.bubblesTableView registerClass:VoiceMessageWithPaginationTitleBubbleCell.class forCellReuseIdentifier:VoiceMessageWithPaginationTitleBubbleCell.defaultReuseIdentifier];
+    
+    [self.bubblesTableView registerClass:PollBubbleCell.class forCellReuseIdentifier:PollBubbleCell.defaultReuseIdentifier];
+    [self.bubblesTableView registerClass:PollWithoutSenderInfoBubbleCell.class forCellReuseIdentifier:PollWithoutSenderInfoBubbleCell.defaultReuseIdentifier];
+    [self.bubblesTableView registerClass:PollWithPaginationTitleBubbleCell.class forCellReuseIdentifier:PollWithPaginationTitleBubbleCell.defaultReuseIdentifier];
     
     [self vc_removeBackTitle];
     
@@ -1984,16 +1987,6 @@ const NSTimeInterval kResizeComposerAnimationDuration = .05;
     RoomInputToolbarView *roomInputView = ((RoomInputToolbarView *) self.inputToolbarView);
     MXWeakify(self);
     NSMutableArray *actionItems = [NSMutableArray new];
-    if (RiotSettings.shared.roomScreenAllowCameraAction)
-    {
-        [actionItems addObject:[[RoomActionItem alloc] initWithImage:[UIImage imageNamed:@"action_camera"] andAction:^{
-            MXStrongifyAndReturnIfNil(self);
-            if ([self.inputToolbarView isKindOfClass:RoomInputToolbarView.class]) {
-                ((RoomInputToolbarView *) self.inputToolbarView).actionMenuOpened = NO;
-            }
-            [self showCameraControllerAnimated:YES];
-        }]];
-    }
     if (RiotSettings.shared.roomScreenAllowMediaLibraryAction)
     {
         [actionItems addObject:[[RoomActionItem alloc] initWithImage:[UIImage imageNamed:@"action_media_library"] andAction:^{
@@ -2024,7 +2017,32 @@ const NSTimeInterval kResizeComposerAnimationDuration = .05;
             [self roomInputToolbarViewDidTapFileUpload];
         }]];
     }
+    if (RiotSettings.shared.roomScreenAllowPollsAction)
+    {
+        [actionItems addObject:[[RoomActionItem alloc] initWithImage:[UIImage imageNamed:@"action_poll"] andAction:^{
+            MXStrongifyAndReturnIfNil(self);
+            if ([self.inputToolbarView isKindOfClass:RoomInputToolbarView.class]) {
+                ((RoomInputToolbarView *) self.inputToolbarView).actionMenuOpened = NO;
+            }
+            [self.delegate roomViewControllerDidRequestPollCreationFormPresentation:self];
+        }]];
+    }
+    if (RiotSettings.shared.roomScreenAllowCameraAction)
+    {
+        [actionItems addObject:[[RoomActionItem alloc] initWithImage:[UIImage imageNamed:@"action_camera"] andAction:^{
+            MXStrongifyAndReturnIfNil(self);
+            if ([self.inputToolbarView isKindOfClass:RoomInputToolbarView.class]) {
+                ((RoomInputToolbarView *) self.inputToolbarView).actionMenuOpened = NO;
+            }
+            [self showCameraControllerAnimated:YES];
+        }]];
+    }
     roomInputView.actionsBar.actionItems = actionItems;
+}
+
+- (NSString *)textInputContextIdentifier
+{
+    return self.roomDataSource.roomId;
 }
 
 - (void)roomInputToolbarViewPresentStickerPicker
@@ -2601,192 +2619,209 @@ const NSTimeInterval kResizeComposerAnimationDuration = .05;
     BOOL showEncryptionBadge = NO;
     
     // Sanity check
-    if ([cellData conformsToProtocol:@protocol(MXKRoomBubbleCellDataStoring)])
+    if (![cellData conformsToProtocol:@protocol(MXKRoomBubbleCellDataStoring)])
     {
-        id<MXKRoomBubbleCellDataStoring> bubbleData = (id<MXKRoomBubbleCellDataStoring>)cellData;
+        return nil;
+    }
         
-        MXKRoomBubbleCellData *roomBubbleCellData;
-        
-        if ([bubbleData isKindOfClass:MXKRoomBubbleCellData.class])
+    id<MXKRoomBubbleCellDataStoring> bubbleData = (id<MXKRoomBubbleCellDataStoring>)cellData;
+    
+    MXKRoomBubbleCellData *roomBubbleCellData;
+    
+    if ([bubbleData isKindOfClass:MXKRoomBubbleCellData.class])
+    {
+        roomBubbleCellData = (MXKRoomBubbleCellData*)bubbleData;
+        showEncryptionBadge = roomBubbleCellData.containsBubbleComponentWithEncryptionBadge;
+    }
+    
+    // Select the suitable table view cell class, by considering first the empty bubble cell.
+    if (bubbleData.hasNoDisplay)
+    {
+        cellViewClass = RoomEmptyBubbleCell.class;
+    }
+    else if (bubbleData.tag == RoomBubbleCellDataTagRoomCreationIntro)
+    {
+        cellViewClass = RoomCreationIntroCell.class;
+    }
+    else if (bubbleData.tag == RoomBubbleCellDataTagRoomCreateWithPredecessor)
+    {
+        cellViewClass = RoomPredecessorBubbleCell.class;
+    }
+    else if (bubbleData.tag == RoomBubbleCellDataTagKeyVerificationRequestIncomingApproval)
+    {
+        cellViewClass = bubbleData.isPaginationFirstBubble ? KeyVerificationIncomingRequestApprovalWithPaginationTitleBubbleCell.class : KeyVerificationIncomingRequestApprovalBubbleCell.class;
+    }
+    else if (bubbleData.tag == RoomBubbleCellDataTagKeyVerificationRequest)
+    {
+        cellViewClass = bubbleData.isPaginationFirstBubble ? KeyVerificationRequestStatusWithPaginationTitleBubbleCell.class : KeyVerificationRequestStatusBubbleCell.class;
+    }
+    else if (bubbleData.tag == RoomBubbleCellDataTagKeyVerificationConclusion)
+    {
+        cellViewClass = bubbleData.isPaginationFirstBubble ? KeyVerificationConclusionWithPaginationTitleBubbleCell.class : KeyVerificationConclusionBubbleCell.class;
+    }
+    else if (bubbleData.tag == RoomBubbleCellDataTagMembership)
+    {
+        if (bubbleData.collapsed)
         {
-            roomBubbleCellData = (MXKRoomBubbleCellData*)bubbleData;
-            showEncryptionBadge = roomBubbleCellData.containsBubbleComponentWithEncryptionBadge;
-        }
-        
-        // Select the suitable table view cell class, by considering first the empty bubble cell.
-        if (bubbleData.hasNoDisplay)
-        {
-            cellViewClass = RoomEmptyBubbleCell.class;
-        }
-        else if (bubbleData.tag == RoomBubbleCellDataTagRoomCreationIntro)
-        {
-            cellViewClass = RoomCreationIntroCell.class;
-        }
-        else if (bubbleData.tag == RoomBubbleCellDataTagRoomCreateWithPredecessor)
-        {
-            cellViewClass = RoomPredecessorBubbleCell.class;
-        }
-        else if (bubbleData.tag == RoomBubbleCellDataTagKeyVerificationRequestIncomingApproval)
-        {
-            cellViewClass = bubbleData.isPaginationFirstBubble ? KeyVerificationIncomingRequestApprovalWithPaginationTitleBubbleCell.class : KeyVerificationIncomingRequestApprovalBubbleCell.class;
-        }
-        else if (bubbleData.tag == RoomBubbleCellDataTagKeyVerificationRequest)
-        {
-            cellViewClass = bubbleData.isPaginationFirstBubble ? KeyVerificationRequestStatusWithPaginationTitleBubbleCell.class : KeyVerificationRequestStatusBubbleCell.class;
-        }
-        else if (bubbleData.tag == RoomBubbleCellDataTagKeyVerificationConclusion)
-        {
-            cellViewClass = bubbleData.isPaginationFirstBubble ? KeyVerificationConclusionWithPaginationTitleBubbleCell.class : KeyVerificationConclusionBubbleCell.class;
-        }
-        else if (bubbleData.tag == RoomBubbleCellDataTagMembership)
-        {
-            if (bubbleData.collapsed)
+            if (bubbleData.nextCollapsableCellData)
             {
-                if (bubbleData.nextCollapsableCellData)
-                {
-                    cellViewClass = bubbleData.isPaginationFirstBubble ? RoomMembershipCollapsedWithPaginationTitleBubbleCell.class : RoomMembershipCollapsedBubbleCell.class;
-                }
-                else
-                {
-                    // Use a normal membership cell for a single membership event
-                    cellViewClass = bubbleData.isPaginationFirstBubble ? RoomMembershipWithPaginationTitleBubbleCell.class : RoomMembershipBubbleCell.class;
-                }
-            }
-            else if (bubbleData.collapsedAttributedTextMessage)
-            {
-                // The cell (and its series) is not collapsed but this cell is the first
-                // of the series. So, use the cell with the "collapse" button.
-                cellViewClass = bubbleData.isPaginationFirstBubble ? RoomMembershipExpandedWithPaginationTitleBubbleCell.class : RoomMembershipExpandedBubbleCell.class;
+                cellViewClass = bubbleData.isPaginationFirstBubble ? RoomMembershipCollapsedWithPaginationTitleBubbleCell.class : RoomMembershipCollapsedBubbleCell.class;
             }
             else
             {
+                // Use a normal membership cell for a single membership event
                 cellViewClass = bubbleData.isPaginationFirstBubble ? RoomMembershipWithPaginationTitleBubbleCell.class : RoomMembershipBubbleCell.class;
             }
         }
-        else if (bubbleData.tag == RoomBubbleCellDataTagRoomCreateConfiguration)
+        else if (bubbleData.collapsedAttributedTextMessage)
         {
-            cellViewClass = bubbleData.isPaginationFirstBubble ? RoomCreationWithPaginationCollapsedBubbleCell.class : RoomCreationCollapsedBubbleCell.class;
+            // The cell (and its series) is not collapsed but this cell is the first
+            // of the series. So, use the cell with the "collapse" button.
+            cellViewClass = bubbleData.isPaginationFirstBubble ? RoomMembershipExpandedWithPaginationTitleBubbleCell.class : RoomMembershipExpandedBubbleCell.class;
         }
-        else if (bubbleData.tag == RoomBubbleCellDataTagCall)
+        else
         {
-            cellViewClass = RoomDirectCallStatusBubbleCell.class;
+            cellViewClass = bubbleData.isPaginationFirstBubble ? RoomMembershipWithPaginationTitleBubbleCell.class : RoomMembershipBubbleCell.class;
         }
-        else if (bubbleData.tag == RoomBubbleCellDataTagGroupCall)
+    }
+    else if (bubbleData.tag == RoomBubbleCellDataTagRoomCreateConfiguration)
+    {
+        cellViewClass = bubbleData.isPaginationFirstBubble ? RoomCreationWithPaginationCollapsedBubbleCell.class : RoomCreationCollapsedBubbleCell.class;
+    }
+    else if (bubbleData.tag == RoomBubbleCellDataTagCall)
+    {
+        cellViewClass = RoomDirectCallStatusBubbleCell.class;
+    }
+    else if (bubbleData.tag == RoomBubbleCellDataTagGroupCall)
+    {
+        cellViewClass = RoomGroupCallStatusBubbleCell.class;
+    }
+    else if (bubbleData.attachment.type == MXKAttachmentTypeVoiceMessage || bubbleData.attachment.type == MXKAttachmentTypeAudio)
+    {
+        if (bubbleData.isPaginationFirstBubble)
         {
-            cellViewClass = RoomGroupCallStatusBubbleCell.class;
+            cellViewClass = VoiceMessageWithPaginationTitleBubbleCell.class;
         }
-        else if (bubbleData.attachment.type == MXKAttachmentTypeVoiceMessage)
+        else if (bubbleData.shouldHideSenderInformation)
         {
-            if (bubbleData.isPaginationFirstBubble)
+            cellViewClass = VoiceMessageWithoutSenderInfoBubbleCell.class;
+        }
+        else
+        {
+            cellViewClass = VoiceMessageBubbleCell.class;
+        }
+    }
+    else if (bubbleData.tag == RoomBubbleCellDataTagPoll)
+    {
+        if (bubbleData.isPaginationFirstBubble)
+        {
+            cellViewClass = PollWithPaginationTitleBubbleCell.class;
+        }
+        else if (bubbleData.shouldHideSenderInformation)
+        {
+            cellViewClass = PollWithoutSenderInfoBubbleCell.class;
+        }
+        else
+        {
+            cellViewClass = PollBubbleCell.class;
+        }
+    }
+    else if (bubbleData.isIncoming)
+    {
+        if (bubbleData.isAttachmentWithThumbnail)
+        {
+            // Check whether the provided celldata corresponds to a selected sticker
+            if (customizedRoomDataSource.selectedEventId && (bubbleData.attachment.type == MXKAttachmentTypeSticker) && [bubbleData.attachment.eventId isEqualToString:customizedRoomDataSource.selectedEventId])
             {
-                cellViewClass = VoiceMessageWithPaginationTitleBubbleCell.class;
+                cellViewClass = RoomSelectedStickerBubbleCell.class;
+            }
+            else if (bubbleData.isPaginationFirstBubble)
+            {
+                cellViewClass = showEncryptionBadge ? RoomIncomingEncryptedAttachmentWithPaginationTitleBubbleCell.class : RoomIncomingAttachmentWithPaginationTitleBubbleCell.class;
             }
             else if (bubbleData.shouldHideSenderInformation)
             {
-                cellViewClass = VoiceMessageWithoutSenderInfoBubbleCell.class;
+                cellViewClass = showEncryptionBadge ? RoomIncomingEncryptedAttachmentWithoutSenderInfoBubbleCell.class : RoomIncomingAttachmentWithoutSenderInfoBubbleCell.class;
             }
             else
             {
-                cellViewClass = VoiceMessageBubbleCell.class;
-            }
-        }
-        else if (bubbleData.isIncoming)
-        {
-            if (bubbleData.isAttachmentWithThumbnail)
-            {
-                // Check whether the provided celldata corresponds to a selected sticker
-                if (customizedRoomDataSource.selectedEventId && (bubbleData.attachment.type == MXKAttachmentTypeSticker) && [bubbleData.attachment.eventId isEqualToString:customizedRoomDataSource.selectedEventId])
-                {
-                    cellViewClass = RoomSelectedStickerBubbleCell.class;
-                }
-                else if (bubbleData.isPaginationFirstBubble)
-                {
-                    cellViewClass = showEncryptionBadge ? RoomIncomingEncryptedAttachmentWithPaginationTitleBubbleCell.class : RoomIncomingAttachmentWithPaginationTitleBubbleCell.class;
-                }
-                else if (bubbleData.shouldHideSenderInformation)
-                {
-                    cellViewClass = showEncryptionBadge ? RoomIncomingEncryptedAttachmentWithoutSenderInfoBubbleCell.class : RoomIncomingAttachmentWithoutSenderInfoBubbleCell.class;
-                }
-                else
-                {
-                    cellViewClass = showEncryptionBadge ? RoomIncomingEncryptedAttachmentBubbleCell.class : RoomIncomingAttachmentBubbleCell.class;
-                }
-            }
-            else
-            {
-                if (bubbleData.isPaginationFirstBubble)
-                {
-                    if (bubbleData.shouldHideSenderName)
-                    {
-                        cellViewClass = showEncryptionBadge ? RoomIncomingEncryptedTextMsgWithPaginationTitleWithoutSenderNameBubbleCell.class : RoomIncomingTextMsgWithPaginationTitleWithoutSenderNameBubbleCell.class;
-                    }
-                    else
-                    {
-                        cellViewClass = showEncryptionBadge ? RoomIncomingEncryptedTextMsgWithPaginationTitleBubbleCell.class : RoomIncomingTextMsgWithPaginationTitleBubbleCell.class;
-                    }
-                }
-                else if (bubbleData.shouldHideSenderInformation)
-                {
-                    cellViewClass = showEncryptionBadge ? RoomIncomingEncryptedTextMsgWithoutSenderInfoBubbleCell.class : RoomIncomingTextMsgWithoutSenderInfoBubbleCell.class;
-                }
-                else if (bubbleData.shouldHideSenderName)
-                {
-                    cellViewClass = showEncryptionBadge ? RoomIncomingEncryptedTextMsgWithoutSenderNameBubbleCell.class : RoomIncomingTextMsgWithoutSenderNameBubbleCell.class;
-                }
-                else
-                {
-                    cellViewClass = showEncryptionBadge ? RoomIncomingEncryptedTextMsgBubbleCell.class : RoomIncomingTextMsgBubbleCell.class;
-                }
+                cellViewClass = showEncryptionBadge ? RoomIncomingEncryptedAttachmentBubbleCell.class : RoomIncomingAttachmentBubbleCell.class;
             }
         }
         else
         {
-            // Handle here outgoing bubbles
-            if (bubbleData.isAttachmentWithThumbnail)
+            if (bubbleData.isPaginationFirstBubble)
             {
-                // Check whether the provided celldata corresponds to a selected sticker
-                if (customizedRoomDataSource.selectedEventId && (bubbleData.attachment.type == MXKAttachmentTypeSticker) && [bubbleData.attachment.eventId isEqualToString:customizedRoomDataSource.selectedEventId])
+                if (bubbleData.shouldHideSenderName)
                 {
-                    cellViewClass = RoomSelectedStickerBubbleCell.class;
-                }
-                else if (bubbleData.isPaginationFirstBubble)
-                {
-                    cellViewClass = showEncryptionBadge ? RoomOutgoingEncryptedAttachmentWithPaginationTitleBubbleCell.class :RoomOutgoingAttachmentWithPaginationTitleBubbleCell.class;
-                }
-                else if (bubbleData.shouldHideSenderInformation)
-                {
-                    cellViewClass = showEncryptionBadge ? RoomOutgoingEncryptedAttachmentWithoutSenderInfoBubbleCell.class : RoomOutgoingAttachmentWithoutSenderInfoBubbleCell.class;
+                    cellViewClass = showEncryptionBadge ? RoomIncomingEncryptedTextMsgWithPaginationTitleWithoutSenderNameBubbleCell.class : RoomIncomingTextMsgWithPaginationTitleWithoutSenderNameBubbleCell.class;
                 }
                 else
                 {
-                    cellViewClass = showEncryptionBadge ? RoomOutgoingEncryptedAttachmentBubbleCell.class : RoomOutgoingAttachmentBubbleCell.class;
+                    cellViewClass = showEncryptionBadge ? RoomIncomingEncryptedTextMsgWithPaginationTitleBubbleCell.class : RoomIncomingTextMsgWithPaginationTitleBubbleCell.class;
                 }
+            }
+            else if (bubbleData.shouldHideSenderInformation)
+            {
+                cellViewClass = showEncryptionBadge ? RoomIncomingEncryptedTextMsgWithoutSenderInfoBubbleCell.class : RoomIncomingTextMsgWithoutSenderInfoBubbleCell.class;
+            }
+            else if (bubbleData.shouldHideSenderName)
+            {
+                cellViewClass = showEncryptionBadge ? RoomIncomingEncryptedTextMsgWithoutSenderNameBubbleCell.class : RoomIncomingTextMsgWithoutSenderNameBubbleCell.class;
             }
             else
             {
-                if (bubbleData.isPaginationFirstBubble)
+                cellViewClass = showEncryptionBadge ? RoomIncomingEncryptedTextMsgBubbleCell.class : RoomIncomingTextMsgBubbleCell.class;
+            }
+        }
+    }
+    else
+    {
+        // Handle here outgoing bubbles
+        if (bubbleData.isAttachmentWithThumbnail)
+        {
+            // Check whether the provided celldata corresponds to a selected sticker
+            if (customizedRoomDataSource.selectedEventId && (bubbleData.attachment.type == MXKAttachmentTypeSticker) && [bubbleData.attachment.eventId isEqualToString:customizedRoomDataSource.selectedEventId])
+            {
+                cellViewClass = RoomSelectedStickerBubbleCell.class;
+            }
+            else if (bubbleData.isPaginationFirstBubble)
+            {
+                cellViewClass = showEncryptionBadge ? RoomOutgoingEncryptedAttachmentWithPaginationTitleBubbleCell.class :RoomOutgoingAttachmentWithPaginationTitleBubbleCell.class;
+            }
+            else if (bubbleData.shouldHideSenderInformation)
+            {
+                cellViewClass = showEncryptionBadge ? RoomOutgoingEncryptedAttachmentWithoutSenderInfoBubbleCell.class : RoomOutgoingAttachmentWithoutSenderInfoBubbleCell.class;
+            }
+            else
+            {
+                cellViewClass = showEncryptionBadge ? RoomOutgoingEncryptedAttachmentBubbleCell.class : RoomOutgoingAttachmentBubbleCell.class;
+            }
+        }
+        else
+        {
+            if (bubbleData.isPaginationFirstBubble)
+            {
+                if (bubbleData.shouldHideSenderName)
                 {
-                    if (bubbleData.shouldHideSenderName)
-                    {
-                        cellViewClass = showEncryptionBadge ? RoomOutgoingEncryptedTextMsgWithPaginationTitleWithoutSenderNameBubbleCell.class : RoomOutgoingTextMsgWithPaginationTitleWithoutSenderNameBubbleCell.class;
-                    }
-                    else
-                    {
-                        cellViewClass = showEncryptionBadge ? RoomOutgoingEncryptedTextMsgWithPaginationTitleBubbleCell.class : RoomOutgoingTextMsgWithPaginationTitleBubbleCell.class;
-                    }
-                }
-                else if (bubbleData.shouldHideSenderInformation)
-                {
-                    cellViewClass = showEncryptionBadge ? RoomOutgoingEncryptedTextMsgWithoutSenderInfoBubbleCell.class :RoomOutgoingTextMsgWithoutSenderInfoBubbleCell.class;
-                }
-                else if (bubbleData.shouldHideSenderName)
-                {
-                    cellViewClass = showEncryptionBadge ? RoomOutgoingEncryptedTextMsgWithoutSenderNameBubbleCell.class : RoomOutgoingTextMsgWithoutSenderNameBubbleCell.class;
+                    cellViewClass = showEncryptionBadge ? RoomOutgoingEncryptedTextMsgWithPaginationTitleWithoutSenderNameBubbleCell.class : RoomOutgoingTextMsgWithPaginationTitleWithoutSenderNameBubbleCell.class;
                 }
                 else
                 {
-                    cellViewClass = showEncryptionBadge ? RoomOutgoingEncryptedTextMsgBubbleCell.class : RoomOutgoingTextMsgBubbleCell.class;
+                    cellViewClass = showEncryptionBadge ? RoomOutgoingEncryptedTextMsgWithPaginationTitleBubbleCell.class : RoomOutgoingTextMsgWithPaginationTitleBubbleCell.class;
                 }
+            }
+            else if (bubbleData.shouldHideSenderInformation)
+            {
+                cellViewClass = showEncryptionBadge ? RoomOutgoingEncryptedTextMsgWithoutSenderInfoBubbleCell.class :RoomOutgoingTextMsgWithoutSenderInfoBubbleCell.class;
+            }
+            else if (bubbleData.shouldHideSenderName)
+            {
+                cellViewClass = showEncryptionBadge ? RoomOutgoingEncryptedTextMsgWithoutSenderNameBubbleCell.class : RoomOutgoingTextMsgWithoutSenderNameBubbleCell.class;
+            }
+            else
+            {
+                cellViewClass = showEncryptionBadge ? RoomOutgoingEncryptedTextMsgBubbleCell.class : RoomOutgoingTextMsgBubbleCell.class;
             }
         }
     }
@@ -3144,7 +3179,7 @@ const NSTimeInterval kResizeComposerAnimationDuration = .05;
         currentAlert = nil;
     }
     
-    __weak __typeof(self) weakSelf = self;
+    MXWeakify(self);
     UIAlertController *actionsMenu = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     
     // Add actions for a failed event
@@ -3153,32 +3188,22 @@ const NSTimeInterval kResizeComposerAnimationDuration = .05;
         [actionsMenu addAction:[UIAlertAction actionWithTitle:[VectorL10n retry]
                                                         style:UIAlertActionStyleDefault
                                                       handler:^(UIAlertAction * action) {
+            MXStrongifyAndReturnIfNil(self);
             
-            if (weakSelf)
-            {
-                typeof(self) self = weakSelf;
-                
-                [self cancelEventSelection];
-                
-                // Let the datasource resend. It will manage local echo, etc.
-                [self.roomDataSource resendEventWithEventId:selectedEvent.eventId success:nil failure:nil];
-            }
+            [self cancelEventSelection];
             
+            // Let the datasource resend. It will manage local echo, etc.
+            [self.roomDataSource resendEventWithEventId:selectedEvent.eventId success:nil failure:nil];
         }]];
         
         [actionsMenu addAction:[UIAlertAction actionWithTitle:[VectorL10n roomEventActionDelete]
                                                         style:UIAlertActionStyleDefault
                                                       handler:^(UIAlertAction * action) {
+            MXStrongifyAndReturnIfNil(self);
             
-            if (weakSelf)
-            {
-                typeof(self) self = weakSelf;
-                
-                [self cancelEventSelection];
-                
-                [self.roomDataSource removeEventWithEventId:selectedEvent.eventId];
-            }
+            [self cancelEventSelection];
             
+            [self.roomDataSource removeEventWithEventId:selectedEvent.eventId];
         }]];
     }
     
@@ -3205,114 +3230,82 @@ const NSTimeInterval kResizeComposerAnimationDuration = .05;
         {
             [actionsMenu addAction:[UIAlertAction actionWithTitle:[VectorL10n roomEventActionCancelSend]
                                                             style:UIAlertActionStyleDefault
-                                                          handler:^(UIAlertAction * action)
-                                     {
-                if (weakSelf)
-                {
-                    typeof(self) self = weakSelf;
-                    
-                    self->currentAlert = nil;
-                    
-                    // Cancel and remove the outgoing message
-                    [self.roomDataSource.room cancelSendingOperation:selectedEvent.eventId];
-                    [self.roomDataSource removeEventWithEventId:selectedEvent.eventId];
-                    
-                    [self cancelEventSelection];
-                }
+                                                          handler:^(UIAlertAction * action) {
+                MXStrongifyAndReturnIfNil(self);
                 
+                self->currentAlert = nil;
+                
+                // Cancel and remove the outgoing message
+                [self.roomDataSource.room cancelSendingOperation:selectedEvent.eventId];
+                [self.roomDataSource removeEventWithEventId:selectedEvent.eventId];
+                
+                [self cancelEventSelection];
             }]];
         }
         
-        [actionsMenu addAction:[UIAlertAction actionWithTitle:[VectorL10n roomEventActionForward]
-                                                        style:UIAlertActionStyleDefault
-                                                      handler:^(UIAlertAction * action) {
-            self.shareManager = [[ShareManager alloc] initWithShareItemProvider:[[SimpleShareItemProvider alloc] initWithTextMessage:selectedComponent.textMessage]
-                                                                           type:ShareManagerTypeForward];
-            
-            MXWeakify(self);
-            [self.shareManager setCompletionCallback:^(ShareManagerResult result) {
+        if (selectedEvent.sentState == MXEventSentStateSent && selectedEvent.eventType != MXEventTypePollStart)
+        {
+            [actionsMenu addAction:[UIAlertAction actionWithTitle:[VectorL10n roomEventActionForward]
+                                                            style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {
                 MXStrongifyAndReturnIfNil(self);
-                [attachment onShareEnded];
-                [self dismissViewControllerAnimated:YES completion:nil];
-                self.shareManager = nil;
-            }];
-            
-            [self presentViewController:self.shareManager.mainViewController animated:YES completion:nil];
-        }]];
+                [self presentEventForwardingDialogForSelectedEvent:selectedEvent];
+            }]];
+        }
         
-        if (!isJitsiCallEvent)
+        if (!isJitsiCallEvent && selectedEvent.eventType != MXEventTypePollStart)
         {
             [actionsMenu addAction:[UIAlertAction actionWithTitle:[VectorL10n roomEventActionQuote]
                                                             style:UIAlertActionStyleDefault
                                                           handler:^(UIAlertAction * action) {
+                MXStrongifyAndReturnIfNil(self);
                 
-                if (weakSelf)
-                {
-                    typeof(self) self = weakSelf;
-                    
-                    [self cancelEventSelection];
-                    
-                    // Quote the message a la Markdown into the input toolbar composer
-                    self.inputToolbarView.textMessage = [NSString stringWithFormat:@"%@\n>%@\n\n", self.inputToolbarView.textMessage, selectedComponent.textMessage];
-                    
-                    // And display the keyboard
-                    [self.inputToolbarView becomeFirstResponder];
-                }
+                [self cancelEventSelection];
                 
+                // Quote the message a la Markdown into the input toolbar composer
+                self.inputToolbarView.textMessage = [NSString stringWithFormat:@"%@\n>%@\n\n", self.inputToolbarView.textMessage, selectedComponent.textMessage];
+                
+                // And display the keyboard
+                [self.inputToolbarView becomeFirstResponder];
             }]];
         }
         
-        if (!isJitsiCallEvent && BuildSettings.messageDetailsAllowShare)
+        if (!isJitsiCallEvent && BuildSettings.messageDetailsAllowShare && selectedEvent.eventType != MXEventTypePollStart)
         {
             [actionsMenu addAction:[UIAlertAction actionWithTitle:[VectorL10n roomEventActionShare]
                                                             style:UIAlertActionStyleDefault
                                                           handler:^(UIAlertAction * action) {
+                MXStrongifyAndReturnIfNil(self);
                 
-                if (weakSelf)
+                [self cancelEventSelection];
+                
+                NSArray *activityItems = @[selectedComponent.textMessage];
+                
+                UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
+                
+                if (activityViewController)
                 {
-                    typeof(self) self = weakSelf;
+                    activityViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+                    activityViewController.popoverPresentationController.sourceView = roomBubbleTableViewCell;
+                    activityViewController.popoverPresentationController.sourceRect = roomBubbleTableViewCell.bounds;
                     
-                    [self cancelEventSelection];
-                    
-                    NSArray *activityItems = @[selectedComponent.textMessage];
-                    
-                    UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
-                    
-                    if (activityViewController)
-                    {
-                        activityViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-                        activityViewController.popoverPresentationController.sourceView = roomBubbleTableViewCell;
-                        activityViewController.popoverPresentationController.sourceRect = roomBubbleTableViewCell.bounds;
-                        
-                        [self presentViewController:activityViewController animated:YES completion:nil];
-                    }
+                    [self presentViewController:activityViewController animated:YES completion:nil];
                 }
-                
             }]];
         }
     }
     else // Add action for attachment
     {
-        if (attachment.type == MXKAttachmentTypeFile ||
-            attachment.type == MXKAttachmentTypeImage ||
-            attachment.type == MXKAttachmentTypeVideo ||
-            attachment.type == MXKAttachmentTypeVoiceMessage) {
-            
+        // Forwarding for already sent attachments
+        if (selectedEvent.sentState == MXEventSentStateSent && (attachment.type == MXKAttachmentTypeFile ||
+                                                                attachment.type == MXKAttachmentTypeImage ||
+                                                                attachment.type == MXKAttachmentTypeVideo ||
+                                                                attachment.type == MXKAttachmentTypeVoiceMessage)) {
             [actionsMenu addAction:[UIAlertAction actionWithTitle:[VectorL10n roomEventActionForward]
                                                             style:UIAlertActionStyleDefault
                                                           handler:^(UIAlertAction * action) {
-                self.shareManager = [[ShareManager alloc] initWithShareItemProvider:[[SimpleShareItemProvider alloc] initWithAttachment:attachment]
-                                                                               type:ShareManagerTypeForward];
-                
-                MXWeakify(self);
-                [self.shareManager setCompletionCallback:^(ShareManagerResult result) {
-                    MXStrongifyAndReturnIfNil(self);
-                    [attachment onShareEnded];
-                    [self dismissViewControllerAnimated:YES completion:nil];
-                    self.shareManager = nil;
-                }];
-                
-                [self presentViewController:self.shareManager.mainViewController animated:YES completion:nil];
+                MXStrongifyAndReturnIfNil(self);
+                [self presentEventForwardingDialogForSelectedEvent:selectedEvent];
             }]];
         }
         
@@ -3323,34 +3316,26 @@ const NSTimeInterval kResizeComposerAnimationDuration = .05;
                 [actionsMenu addAction:[UIAlertAction actionWithTitle:[VectorL10n roomEventActionSave]
                                                                 style:UIAlertActionStyleDefault
                                                               handler:^(UIAlertAction * action) {
+                    MXStrongifyAndReturnIfNil(self);
                     
-                    if (weakSelf)
-                    {
-                        typeof(self) self = weakSelf;
-                        
-                        [self cancelEventSelection];
-                        
-                        [self startActivityIndicator];
-                        
-                        [attachment save:^{
-                            
-                            __strong __typeof(weakSelf)self = weakSelf;
-                            [self stopActivityIndicator];
-                            
-                        } failure:^(NSError *error) {
-                            
-                            __strong __typeof(weakSelf)self = weakSelf;
-                            [self stopActivityIndicator];
-                            
-                            //Alert user
-                            [self showError:error];
-                            
-                        }];
-                        
-                        // Start animation in case of download during attachment preparing
-                        [roomBubbleTableViewCell startProgressUI];
-                    }
+                    [self cancelEventSelection];
                     
+                    [self startActivityIndicator];
+                    
+                    MXWeakify(self);
+                    [attachment save:^{
+                        MXStrongifyAndReturnIfNil(self);
+                        [self stopActivityIndicator];
+                    } failure:^(NSError *error) {
+                        MXStrongifyAndReturnIfNil(self);
+                        [self stopActivityIndicator];
+                        
+                        //Alert user
+                        [self showError:error];
+                    }];
+                    
+                    // Start animation in case of download during attachment preparing
+                    [roomBubbleTableViewCell startProgressUI];
                 }]];
             }
         }
@@ -3369,6 +3354,8 @@ const NSTimeInterval kResizeComposerAnimationDuration = .05;
                                                                 style:UIAlertActionStyleDefault
                                                               handler:^(UIAlertAction * action) {
                     
+                    MXStrongifyAndReturnIfNil(self);
+                    
                     // Get again the loader
                     MXMediaLoader *loader = [MXMediaManager existingUploaderWithId:uploadId];
                     if (loader)
@@ -3378,23 +3365,17 @@ const NSTimeInterval kResizeComposerAnimationDuration = .05;
                     // Hide the progress animation
                     roomBubbleTableViewCell.progressView.hidden = YES;
                     
-                    if (weakSelf)
-                    {
-                        typeof(self) self = weakSelf;
-                        
-                        self->currentAlert = nil;
-                        
-                        // Remove the outgoing message and its related cached file.
-                        [[NSFileManager defaultManager] removeItemAtPath:roomBubbleTableViewCell.bubbleData.attachment.cacheFilePath error:nil];
-                        [[NSFileManager defaultManager] removeItemAtPath:roomBubbleTableViewCell.bubbleData.attachment.thumbnailCachePath error:nil];
-                        
-                        // Cancel and remove the outgoing message
-                        [self.roomDataSource.room cancelSendingOperation:selectedEvent.eventId];
-                        [self.roomDataSource removeEventWithEventId:selectedEvent.eventId];
-                        
-                        [self cancelEventSelection];
-                    }
+                    self->currentAlert = nil;
                     
+                    // Remove the outgoing message and its related cached file.
+                    [[NSFileManager defaultManager] removeItemAtPath:roomBubbleTableViewCell.bubbleData.attachment.cacheFilePath error:nil];
+                    [[NSFileManager defaultManager] removeItemAtPath:roomBubbleTableViewCell.bubbleData.attachment.thumbnailCachePath error:nil];
+                    
+                    // Cancel and remove the outgoing message
+                    [self.roomDataSource.room cancelSendingOperation:selectedEvent.eventId];
+                    [self.roomDataSource removeEventWithEventId:selectedEvent.eventId];
+                    
+                    [self cancelEventSelection];
                 }]];
             }
         }
@@ -3406,39 +3387,36 @@ const NSTimeInterval kResizeComposerAnimationDuration = .05;
                 [actionsMenu addAction:[UIAlertAction actionWithTitle:[VectorL10n roomEventActionShare]
                                                                 style:UIAlertActionStyleDefault
                                                               handler:^(UIAlertAction * action) {
+                    MXStrongifyAndReturnIfNil(self);
                     
-                    if (weakSelf)
-                    {
-                        typeof(self) self = weakSelf;
-                        
-                        [self cancelEventSelection];
-                        
-                        [self startActivityIndicator];
-                        
-                        [attachment prepareShare:^(NSURL *fileURL) {
-                            [self stopActivityIndicator];
-                            
-                            __strong __typeof(weakSelf)self = weakSelf;
-                            self->documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:fileURL];
-                            [self->documentInteractionController setDelegate:self];
-                            self->currentSharedAttachment = attachment;
-                            
-                            if (![self->documentInteractionController presentOptionsMenuFromRect:self.view.frame inView:self.view animated:YES])
-                            {
-                                self->documentInteractionController = nil;
-                                [attachment onShareEnded];
-                                self->currentSharedAttachment = nil;
-                            }
-                            
-                        } failure:^(NSError *error) {
-                            [self showError:error];
-                            [self stopActivityIndicator];
-                        }];
-                        
-                        // Start animation in case of download during attachment preparing
-                        [roomBubbleTableViewCell startProgressUI];
-                    }
+                    [self cancelEventSelection];
                     
+                    [self startActivityIndicator];
+                    
+                    MXWeakify(self);
+                    [attachment prepareShare:^(NSURL *fileURL) {
+                        MXStrongifyAndReturnIfNil(self);
+                        
+                        [self stopActivityIndicator];
+                        
+                        self->documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:fileURL];
+                        [self->documentInteractionController setDelegate:self];
+                        self->currentSharedAttachment = attachment;
+                        
+                        if (![self->documentInteractionController presentOptionsMenuFromRect:self.view.frame inView:self.view animated:YES])
+                        {
+                            self->documentInteractionController = nil;
+                            [attachment onShareEnded];
+                            self->currentSharedAttachment = nil;
+                        }
+                        
+                    } failure:^(NSError *error) {
+                        [self showError:error];
+                        [self stopActivityIndicator];
+                    }];
+                    
+                    // Start animation in case of download during attachment preparing
+                    [roomBubbleTableViewCell startProgressUI];
                 }]];
             }
         }
@@ -3456,23 +3434,18 @@ const NSTimeInterval kResizeComposerAnimationDuration = .05;
                 [actionsMenu addAction:[UIAlertAction actionWithTitle:[VectorL10n roomEventActionCancelDownload]
                                                                 style:UIAlertActionStyleDefault
                                                               handler:^(UIAlertAction * action) {
+                    MXStrongifyAndReturnIfNil(self);
                     
-                    if (weakSelf)
+                    [self cancelEventSelection];
+                    
+                    // Get again the loader
+                    MXMediaLoader *loader = [MXMediaManager existingDownloaderWithIdentifier:downloadId];
+                    if (loader)
                     {
-                        typeof(self) self = weakSelf;
-                        
-                        [self cancelEventSelection];
-                        
-                        // Get again the loader
-                        MXMediaLoader *loader = [MXMediaManager existingDownloaderWithIdentifier:downloadId];
-                        if (loader)
-                        {
-                            [loader cancel];
-                        }
-                        // Hide the progress animation
-                        roomBubbleTableViewCell.progressView.hidden = YES;
+                        [loader cancel];
                     }
-                    
+                    // Hide the progress animation
+                    roomBubbleTableViewCell.progressView.hidden = YES;
                 }]];
             }
         }
@@ -3481,63 +3454,82 @@ const NSTimeInterval kResizeComposerAnimationDuration = .05;
         // because it breaks everything
         if (selectedEvent.eventType != MXEventTypeRoomEncryption)
         {
-            [actionsMenu addAction:[UIAlertAction actionWithTitle:[VectorL10n roomEventActionRedact]
+            NSString *title;
+            if (selectedEvent.eventType == MXEventTypePollStart)
+            {
+                title = [VectorL10n roomEventActionRemovePoll];
+            }
+            else
+            {
+                title = [VectorL10n roomEventActionRedact];
+            }
+            
+            [actionsMenu addAction:[UIAlertAction actionWithTitle:title
                                                             style:UIAlertActionStyleDefault
                                                           handler:^(UIAlertAction * action) {
+                MXStrongifyAndReturnIfNil(self);
                 
-                if (weakSelf)
-                {
-                    typeof(self) self = weakSelf;
-                    
-                    [self cancelEventSelection];
-                    
-                    [self startActivityIndicator];
-                    
-                    [self.roomDataSource.room redactEvent:selectedEvent.eventId reason:nil success:^{
-                        
-                        __strong __typeof(weakSelf)self = weakSelf;
-                        [self stopActivityIndicator];
-                        
-                    } failure:^(NSError *error) {
-                        
-                        __strong __typeof(weakSelf)self = weakSelf;
-                        [self stopActivityIndicator];
-                        
-                        MXLogDebug(@"[RoomVC] Redact event (%@) failed", selectedEvent.eventId);
-                        //Alert user
-                        [self showError:error];
-                        
-                    }];
-                }
+                [self cancelEventSelection];
                 
+                [self startActivityIndicator];
+                
+                MXWeakify(self);
+                [self.roomDataSource.room redactEvent:selectedEvent.eventId reason:nil success:^{
+                    MXStrongifyAndReturnIfNil(self);
+                    [self stopActivityIndicator];
+                } failure:^(NSError *error) {
+                    MXStrongifyAndReturnIfNil(self);
+                    [self stopActivityIndicator];
+                    
+                    MXLogDebug(@"[RoomVC] Redact event (%@) failed", selectedEvent.eventId);
+                    //Alert user
+                    [self showError:error];
+                }];
             }]];
         }
+        
+        if (selectedEvent.eventType == MXEventTypePollStart && [selectedEvent.sender isEqualToString:self.mainSession.myUser.userId]) {
+            if ([self.delegate roomViewController:self canEndPollWithEventIdentifier:selectedEvent.eventId]) {
+                [actionsMenu addAction:[UIAlertAction actionWithTitle:[VectorL10n roomEventActionEndPoll]
+                                                                style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction * action) {
+                    MXStrongifyAndReturnIfNil(self);
+                    
+                    [self.delegate roomViewController:self endPollWithEventIdentifier:selectedEvent.eventId];
+                    
+                    [self hideContextualMenuAnimated:YES];
+                }]];
+            }
+        }
+        
+        [actionsMenu addAction:[UIAlertAction actionWithTitle:[VectorL10n cancel]
+                                                        style:UIAlertActionStyleCancel
+                                                      handler:^(UIAlertAction * action) {
+            MXStrongifyAndReturnIfNil(self);
+            
+            [self hideContextualMenuAnimated:YES];
+        }]];
         
         if (BuildSettings.messageDetailsAllowPermalink)
         {
             [actionsMenu addAction:[UIAlertAction actionWithTitle:[VectorL10n roomEventActionPermalink]
                                                             style:UIAlertActionStyleDefault
                                                           handler:^(UIAlertAction * action) {
+                MXStrongifyAndReturnIfNil(self);
                 
-                if (weakSelf)
+                [self cancelEventSelection];
+                
+                // Create a matrix.to permalink that is common to all matrix clients
+                NSString *permalink = [MXTools permalinkToEvent:selectedEvent.eventId inRoom:selectedEvent.roomId];
+                
+                if (permalink)
                 {
-                    typeof(self) self = weakSelf;
-                    
-                    [self cancelEventSelection];
-                    
-                    // Create a matrix.to permalink that is common to all matrix clients
-                    NSString *permalink = [MXTools permalinkToEvent:selectedEvent.eventId inRoom:selectedEvent.roomId];
-                    
-                    if (permalink)
-                    {
-                        MXKPasteboardManager.shared.pasteboard.string = permalink;
-                    }
-                    else
-                    {
-                        MXLogDebug(@"[RoomViewController] Contextual menu permalink action failed. Permalink is nil room id/event id: %@/%@", selectedEvent.roomId, selectedEvent.eventId);
-                    }
+                    MXKPasteboardManager.shared.pasteboard.string = permalink;
                 }
-                
+                else
+                {
+                    MXLogDebug(@"[RoomViewController] Contextual menu permalink action failed. Permalink is nil room id/event id: %@/%@", selectedEvent.roomId, selectedEvent.eventId);
+                }
             }]];
         }
         
@@ -3547,6 +3539,7 @@ const NSTimeInterval kResizeComposerAnimationDuration = .05;
             [actionsMenu addAction:[UIAlertAction actionWithTitle:[VectorL10n roomEventActionReactionHistory]
                                                             style:UIAlertActionStyleDefault
                                                           handler:^(UIAlertAction * action) {
+                MXStrongifyAndReturnIfNil(self);
                 
                 [self cancelEventSelection];
                 
@@ -3560,17 +3553,12 @@ const NSTimeInterval kResizeComposerAnimationDuration = .05;
             [actionsMenu addAction:[UIAlertAction actionWithTitle:[VectorL10n roomEventActionViewSource]
                                                             style:UIAlertActionStyleDefault
                                                           handler:^(UIAlertAction * action) {
+                MXStrongifyAndReturnIfNil(self);
                 
-                if (weakSelf)
-                {
-                    typeof(self) self = weakSelf;
-                    
-                    [self cancelEventSelection];
-                    
-                    // Display event details
-                    [self showEventDetails:selectedEvent];
-                }
+                [self cancelEventSelection];
                 
+                // Display event details
+                [self showEventDetails:selectedEvent];
             }]];
             
             
@@ -3580,17 +3568,12 @@ const NSTimeInterval kResizeComposerAnimationDuration = .05;
                 [actionsMenu addAction:[UIAlertAction actionWithTitle:[VectorL10n roomEventActionViewDecryptedSource]
                                                                 style:UIAlertActionStyleDefault
                                                               handler:^(UIAlertAction * action) {
+                    MXStrongifyAndReturnIfNil(self);
                     
-                    if (weakSelf)
-                    {
-                        typeof(self) self = weakSelf;
-                        
-                        [self cancelEventSelection];
-                        
-                        // Display clear event details
-                        [self showEventDetails:selectedEvent.clearEvent];
-                    }
+                    [self cancelEventSelection];
                     
+                    // Display clear event details
+                    [self showEventDetails:selectedEvent.clearEvent];
                 }]];
             }
         }
@@ -3600,112 +3583,90 @@ const NSTimeInterval kResizeComposerAnimationDuration = .05;
             [actionsMenu addAction:[UIAlertAction actionWithTitle:[VectorL10n roomEventActionReport]
                                                             style:UIAlertActionStyleDefault
                                                           handler:^(UIAlertAction * action) {
+                MXStrongifyAndReturnIfNil(self);
                 
-                if (weakSelf)
-                {
-                    typeof(self) self = weakSelf;
+                [self cancelEventSelection];
+                
+                // Prompt user to enter a description of the problem content.
+                UIAlertController *reportReasonAlert = [UIAlertController alertControllerWithTitle:[VectorL10n roomEventActionReportPromptReason]
+                                                                                           message:nil
+                                                                                    preferredStyle:UIAlertControllerStyleAlert];
+                
+                [reportReasonAlert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+                    textField.secureTextEntry = NO;
+                    textField.placeholder = nil;
+                    textField.keyboardType = UIKeyboardTypeDefault;
+                }];
+                
+                MXWeakify(self);
+                [reportReasonAlert addAction:[UIAlertAction actionWithTitle:[MatrixKitL10n ok] style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                    MXStrongifyAndReturnIfNil(self);
                     
-                    [self cancelEventSelection];
+                    NSString *text = [self->currentAlert textFields].firstObject.text;
+                    self->currentAlert = nil;
                     
-                    // Prompt user to enter a description of the problem content.
-                    UIAlertController *reportReasonAlert = [UIAlertController alertControllerWithTitle:[VectorL10n roomEventActionReportPromptReason]  message:nil preferredStyle:UIAlertControllerStyleAlert];
+                    [self startActivityIndicator];
                     
-                    [reportReasonAlert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-                        textField.secureTextEntry = NO;
-                        textField.placeholder = nil;
-                        textField.keyboardType = UIKeyboardTypeDefault;
-                    }];
-                    
-                    [reportReasonAlert addAction:[UIAlertAction actionWithTitle:[MatrixKitL10n ok] style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                    MXWeakify(self);
+                    [self.roomDataSource.room reportEvent:selectedEvent.eventId score:-100 reason:text success:^{
+                        MXStrongifyAndReturnIfNil(self);
                         
-                        if (weakSelf)
-                        {
-                            typeof(self) self = weakSelf;
-                            NSString *text = [self->currentAlert textFields].firstObject.text;
+                        [self stopActivityIndicator];
+                        
+                        // Prompt user to ignore content from this user
+                        UIAlertController *ignoreUserAlert = [UIAlertController alertControllerWithTitle:[VectorL10n roomEventActionReportPromptIgnoreUser]
+                                                                                                 message:nil
+                                                                                          preferredStyle:UIAlertControllerStyleAlert];
+                        
+                        MXWeakify(self);
+                        [ignoreUserAlert addAction:[UIAlertAction actionWithTitle:[MatrixKitL10n yes] style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                            
+                            MXStrongifyAndReturnIfNil(self);
                             self->currentAlert = nil;
                             
                             [self startActivityIndicator];
                             
-                            [self.roomDataSource.room reportEvent:selectedEvent.eventId score:-100 reason:text success:^{
-                                
-                                __strong __typeof(weakSelf)self = weakSelf;
+                            MXWeakify(self);
+                            // Add the user to the blacklist: ignored users
+                            [self.mainSession ignoreUsers:@[selectedEvent.sender] success:^{
+                                MXStrongifyAndReturnIfNil(self);
                                 [self stopActivityIndicator];
-                                
-                                // Prompt user to ignore content from this user
-                                UIAlertController *ignoreUserAlert = [UIAlertController alertControllerWithTitle:[VectorL10n roomEventActionReportPromptIgnoreUser]
-                                                                                                         message:nil
-                                                                                                  preferredStyle:UIAlertControllerStyleAlert];
-                                
-                                [ignoreUserAlert addAction:[UIAlertAction actionWithTitle:[MatrixKitL10n yes] style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                    
-                                    if (weakSelf)
-                                    {
-                                        typeof(self) self = weakSelf;
-                                        self->currentAlert = nil;
-                                        
-                                        [self startActivityIndicator];
-                                        
-                                        // Add the user to the blacklist: ignored users
-                                        [self.mainSession ignoreUsers:@[selectedEvent.sender] success:^{
-                                            
-                                            __strong __typeof(weakSelf)self = weakSelf;
-                                            [self stopActivityIndicator];
-                                            
-                                        } failure:^(NSError *error) {
-                                            
-                                            __strong __typeof(weakSelf)self = weakSelf;
-                                            [self stopActivityIndicator];
-                                            
-                                            MXLogDebug(@"[RoomVC] Ignore user (%@) failed", selectedEvent.sender);
-                                            //Alert user
-                                            [self showError:error];
-                                            
-                                        }];
-                                    }
-                                    
-                                }]];
-                                
-                                [ignoreUserAlert addAction:[UIAlertAction actionWithTitle:[MatrixKitL10n no] style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                    
-                                    if (weakSelf)
-                                    {
-                                        typeof(self) self = weakSelf;
-                                        self->currentAlert = nil;
-                                    }
-                                    
-                                }]];
-                                
-                                [self presentViewController:ignoreUserAlert animated:YES completion:nil];
-                                self->currentAlert = ignoreUserAlert;
-                                
                             } failure:^(NSError *error) {
-                                
-                                __strong __typeof(weakSelf)self = weakSelf;
+                                MXStrongifyAndReturnIfNil(self);
                                 [self stopActivityIndicator];
                                 
-                                MXLogDebug(@"[RoomVC] Report event (%@) failed", selectedEvent.eventId);
+                                MXLogDebug(@"[RoomVC] Ignore user (%@) failed", selectedEvent.sender);
                                 //Alert user
                                 [self showError:error];
-                                
                             }];
-                        }
+                        }]];
                         
-                    }]];
-                    
-                    [reportReasonAlert addAction:[UIAlertAction actionWithTitle:[MatrixKitL10n cancel] style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
-                        
-                        if (weakSelf)
-                        {
-                            typeof(self) self = weakSelf;
+                        [ignoreUserAlert addAction:[UIAlertAction actionWithTitle:[MatrixKitL10n no] style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                            MXStrongifyAndReturnIfNil(self);
                             self->currentAlert = nil;
-                        }
+                        }]];
                         
-                    }]];
-                    
-                    [self presentViewController:reportReasonAlert animated:YES completion:nil];
-                    self->currentAlert = reportReasonAlert;
-                }
+                        [self presentViewController:ignoreUserAlert animated:YES completion:nil];
+                        self->currentAlert = ignoreUserAlert;
+                        
+                    } failure:^(NSError *error) {
+                        MXStrongifyAndReturnIfNil(self);
+                        [self stopActivityIndicator];
+                        
+                        MXLogDebug(@"[RoomVC] Report event (%@) failed", selectedEvent.eventId);
+                        //Alert user
+                        [self showError:error];
+                        
+                    }];
+                }]];
                 
+                [reportReasonAlert addAction:[UIAlertAction actionWithTitle:[MatrixKitL10n cancel] style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+                    MXStrongifyAndReturnIfNil(self);
+                    self->currentAlert = nil;
+                }]];
+                
+                [self presentViewController:reportReasonAlert animated:YES completion:nil];
+                self->currentAlert = reportReasonAlert;
             }]];
         }
         
@@ -3714,31 +3675,16 @@ const NSTimeInterval kResizeComposerAnimationDuration = .05;
             [actionsMenu addAction:[UIAlertAction actionWithTitle:[VectorL10n roomEventActionViewEncryption]
                                                             style:UIAlertActionStyleDefault
                                                           handler:^(UIAlertAction * action) {
+                MXStrongifyAndReturnIfNil(self);
                 
-                if (weakSelf)
-                {
-                    typeof(self) self = weakSelf;
-                    [self cancelEventSelection];
-                    
-                    // Display encryption details
-                    [self showEncryptionInformation:selectedEvent];
-                }
+                [self cancelEventSelection];
                 
+                // Display encryption details
+                [self showEncryptionInformation:selectedEvent];
             }]];
         }
+        
     }
-    
-    [actionsMenu addAction:[UIAlertAction actionWithTitle:[VectorL10n cancel]
-                                                    style:UIAlertActionStyleCancel
-                                                  handler:^(UIAlertAction * action) {
-        
-        if (weakSelf)
-        {
-            typeof(self) self = weakSelf;
-            [self hideContextualMenuAnimated:YES];
-        }
-        
-    }]];
     
     // Do not display empty action sheet
     if (actionsMenu.actions.count > 1)
@@ -3753,6 +3699,25 @@ const NSTimeInterval kResizeComposerAnimationDuration = .05;
         [self presentViewController:actionsMenu animated:animated completion:nil];
         currentAlert = actionsMenu;
     }
+}
+
+- (void)presentEventForwardingDialogForSelectedEvent:(MXEvent *)selectedEvent
+{
+    ForwardingShareItemSender *shareItemSender = [[ForwardingShareItemSender alloc] initWithEvent:selectedEvent];
+    self.shareManager = [[ShareManager alloc] initWithShareItemSender:shareItemSender
+                                                                 type:ShareManagerTypeForward];
+    
+    MXWeakify(self);
+    [self.shareManager setCompletionCallback:^(ShareManagerResult result) {
+        MXStrongifyAndReturnIfNil(self);
+        if ([self.presentedViewController isEqual:self.shareManager.mainViewController])
+        {
+            [self dismissViewControllerAnimated:YES completion:nil];
+        }
+        self.shareManager = nil;
+    }];
+    
+    [self presentViewController:self.shareManager.mainViewController animated:YES completion:nil];
 }
 
 - (BOOL)dataSource:(MXKDataSource *)dataSource shouldDoAction:(NSString *)actionIdentifier inCell:(id<MXKCellRendering>)cell userInfo:(NSDictionary *)userInfo defaultValue:(BOOL)defaultValue
@@ -6119,7 +6084,7 @@ const NSTimeInterval kResizeComposerAnimationDuration = .05;
     
     MXWeakify(self);
     
-    BOOL isCopyActionEnabled = !attachment || attachment.type != MXKAttachmentTypeSticker;
+    BOOL isCopyActionEnabled = (event.eventType != MXEventTypePollStart && (!attachment || attachment.type != MXKAttachmentTypeSticker));
     
     if (attachment && !BuildSettings.messageDetailsAllowCopyMedia)
     {
