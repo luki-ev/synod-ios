@@ -15,7 +15,6 @@
 //
 
 import Foundation
-import Keys
 
 /// BuildSettings provides settings computed at build time.
 /// In future, it may be automatically generated from xcconfig files
@@ -199,8 +198,10 @@ final class BuildSettings: NSObject {
     
     static let allowInviteExernalUsers: Bool = true
     
+    // MARK: - Side Menu
     static let enableSideMenu: Bool = true
-    
+    static let sideMenuShowInviteFriends: Bool = true
+
     /// Whether to read the `io.element.functional_members` state event and exclude any service members when computing a room's name and avatar.
     static let supportFunctionalMembers: Bool = true
     
@@ -247,7 +248,6 @@ final class BuildSettings: NSObject {
     static let settingsScreenAllowBugReportingManually: Bool = true
     static let settingsScreenAllowDeactivatingAccount: Bool = true
     static let settingsScreenShowChangePassword:Bool = true
-    static let settingsScreenShowInviteFriends:Bool = true
     static let settingsScreenShowEnableStunServerFallback: Bool = false
     static let settingsScreenShowNotificationDecodedContentOption: Bool = true
     static let settingsScreenShowNsfwRoomsOption: Bool = true
@@ -277,6 +277,13 @@ final class BuildSettings: NSObject {
     static let roomScreenAllowMediaLibraryAction: Bool = true
     static let roomScreenAllowStickerAction: Bool = false
     static let roomScreenAllowFilesAction: Bool = true
+    
+    // Timeline style
+    static let roomScreenAllowTimelineStyleConfiguration: Bool = true
+    static let roomScreenTimelineDefaultStyleIdentifier: RoomTimelineStyleIdentifier = .plain
+    static var roomScreenEnableMessageBubblesByDefault: Bool {
+        return self.roomScreenTimelineDefaultStyleIdentifier == .bubble
+    }
 
     /// Allow split view detail view stacking    
     static let allowSplitViewDetailsScreenStacking: Bool = true
@@ -328,6 +335,7 @@ final class BuildSettings: NSObject {
     static let authScreenShowPhoneNumber = false
     static let authScreenShowForgotPassword = true
     static let authScreenShowCustomServerOptions = true
+    static let authScreenShowSocialLoginSection = true
     
     // MARK: - Unified Search
     static let unifiedSearchScreenShowPublicDirectory = true
@@ -347,7 +355,7 @@ final class BuildSettings: NSObject {
     
     // MARK: - Location Sharing
     
-    static let tileServerMapURL = URL(string: "https://api.maptiler.com/maps/streets/style.json?key=" + RiotKeys().mapTilerAPIKey)!
+    static let tileServerMapURL = URL(string: "https://api.maptiler.com/maps/streets/style.json?key=fU3vlMsMn4Jb6dnEIFsx")!
     
     static var locationSharingEnabled: Bool {
         guard #available(iOS 14, *) else {
