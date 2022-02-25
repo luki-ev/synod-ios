@@ -137,8 +137,6 @@ final class BuildSettings: NSObject {
     static let stunServerFallbackUrlString: String? = "stun:turn.jitsi.luki.org"
     
     // MARK: -  Public rooms Directory
-    #warning("Unused build setting: should this be implemented in ShowDirectory?")
-    static let publicRoomsAllowServerChange: Bool = true
     // List of homeservers for the public rooms directory
     static let publicRoomsDirectoryServers = [
         "synod.im"
@@ -197,6 +195,15 @@ final class BuildSettings: NSObject {
     static let allowLocalContactsAccess: Bool = false
     
     static let allowInviteExernalUsers: Bool = true
+    
+    /// Whether a screen uses legacy local activity indicators or improved app-wide indicators
+    static var appActivityIndicators: Bool {
+        #if DEBUG
+        return false
+        #else
+        return false
+        #endif
+    }
     
     // MARK: - Side Menu
     static let enableSideMenu: Bool = true
