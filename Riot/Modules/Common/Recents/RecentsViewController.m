@@ -36,7 +36,7 @@
 
 NSString *const RecentsViewControllerDataReadyNotification = @"RecentsViewControllerDataReadyNotification";
 
-@interface RecentsViewController () <CreateRoomCoordinatorBridgePresenterDelegate, RoomsDirectoryCoordinatorBridgePresenterDelegate, RoomNotificationSettingsCoordinatorBridgePresenterDelegate, DialpadViewControllerDelegate, ExploreRoomCoordinatorBridgePresenterDelegate>
+@interface RecentsViewController () <CreateRoomCoordinatorBridgePresenterDelegate, RoomsDirectoryCoordinatorBridgePresenterDelegate, RoomNotificationSettingsCoordinatorBridgePresenterDelegate, DialpadViewControllerDelegate, ExploreRoomCoordinatorBridgePresenterDelegate, SpaceChildRoomDetailBridgePresenterDelegate>
 {
     // Tell whether a recents refresh is pending (suspended during editing mode).
     BOOL isRefreshPending;
@@ -82,6 +82,8 @@ NSString *const RecentsViewControllerDataReadyNotification = @"RecentsViewContro
 @property (nonatomic, strong) CustomSizedPresentationController *customSizedPresentationController;
 
 @property (nonatomic, strong) RoomNotificationSettingsCoordinatorBridgePresenter *roomNotificationSettingsCoordinatorBridgePresenter;
+
+@property (nonatomic, strong) SpaceChildRoomDetailBridgePresenter *spaceChildPresenter;
 
 @end
 
@@ -878,6 +880,12 @@ NSString *const RecentsViewControllerDataReadyNotification = @"RecentsViewContro
 
 - (void)showRoomWithRoomId:(NSString*)roomId inMatrixSession:(MXSession*)matrixSession
 {
+    MXRoom *room = [matrixSession roomWithRoomId:roomId];
+    if (room.summary.membership == MXMembershipInvite)
+    {
+        Analytics.shared.joinedRoomTrigger = AnalyticsJoinedRoomTriggerInvite;
+    }
+
     // Avoid multiple openings of rooms
     self.userInteractionEnabled = NO;
 
@@ -897,6 +905,8 @@ NSString *const RecentsViewControllerDataReadyNotification = @"RecentsViewContro
 
 - (void)showRoomPreviewWithData:(RoomPreviewData*)roomPreviewData
 {
+    Analytics.shared.joinedRoomTrigger = AnalyticsJoinedRoomTriggerRoomDirectory;
+
     // Do not stack views when showing room
     ScreenPresentationParameters *presentationParameters = [[ScreenPresentationParameters alloc] initWithRestoreInitialDisplay:NO stackAboveVisibleViews:NO sender:nil sourceView:nil];
     
@@ -993,6 +1003,7 @@ NSString *const RecentsViewControllerDataReadyNotification = @"RecentsViewContro
         }
         
         // Accept invitation
+        Analytics.shared.joinedRoomTrigger = AnalyticsJoinedRoomTriggerInvite;
         [self joinRoom:invitedRoom completion:nil];
     }
     else if ([actionIdentifier isEqualToString:kInviteRecentTableViewCellDeclineButtonPressed])
@@ -1892,7 +1903,7 @@ NSString *const RecentsViewControllerDataReadyNotification = @"RecentsViewContro
                                                            typeof(self) self = weakSelf;
                                                            self->currentAlert = nil;
                                                            
-                                                           [self performSegueWithIdentifier:@"presentStartChat" sender:self];
+                                                           [self startChat];
                                                        }
                                                        
                                                    }]];
@@ -2002,12 +2013,17 @@ NSString *const RecentsViewControllerDataReadyNotification = @"RecentsViewContro
     self.customSizedPresentationController = nil;
 }
 
+- (void)startChat {
+    [self performSegueWithIdentifier:@"presentStartChat" sender:self];
+}
+
 - (void)createNewRoom
 {
     // Sanity check
     if (self.mainSession)
     {
-        self.createRoomCoordinatorBridgePresenter = [[CreateRoomCoordinatorBridgePresenter alloc] initWithSession:self.mainSession];
+        CreateRoomCoordinatorParameter *parameters = [[CreateRoomCoordinatorParameter alloc] initWithSession:self.mainSession parentSpace: self.dataSource.currentSpace];
+        self.createRoomCoordinatorBridgePresenter = [[CreateRoomCoordinatorBridgePresenter alloc] initWithParameters:parameters];
         self.createRoomCoordinatorBridgePresenter.delegate = self;
         [self.createRoomCoordinatorBridgePresenter presentFrom:self animated:YES];
     }
@@ -2055,6 +2071,8 @@ NSString *const RecentsViewControllerDataReadyNotification = @"RecentsViewContro
     // Check whether the user has already joined the selected public room
     if ([self.recentsDataSource.publicRoomsDirectoryDataSource.mxSession isJoinedOnRoom:publicRoom.roomId])
     {
+        Analytics.shared.viewRoomTrigger = AnalyticsViewRoomTriggerRoomDirectory;
+        
         // Open the public room
         [self showRoomWithRoomId:publicRoom.roomId
                  inMatrixSession:self.recentsDataSource.publicRoomsDirectoryDataSource.mxSession];
@@ -2150,19 +2168,17 @@ NSString *const RecentsViewControllerDataReadyNotification = @"RecentsViewContro
 
 - (void)recentListViewController:(MXKRecentListViewController *)recentListViewController didSelectRoom:(NSString *)roomId inMatrixSession:(MXSession *)matrixSession
 {
+    Analytics.shared.viewRoomTrigger = AnalyticsViewRoomTriggerRoomList;
     [self showRoomWithRoomId:roomId inMatrixSession:matrixSession];
 }
 
-- (void)recentListViewController:(MXKRecentListViewController *)recentListViewController didSelectSuggestedRoom:(MXSpaceChildInfo *)childInfo
+- (void)recentListViewController:(MXKRecentListViewController *)recentListViewController didSelectSuggestedRoom:(MXSpaceChildInfo *)childInfo from:(UIView* _Nullable)sourceView
 {
-    RoomPreviewData *previewData = [[RoomPreviewData alloc] initWithSpaceChildInfo:childInfo andSession:self.mainSession];
-    [self startActivityIndicator];
-    MXWeakify(self);
-    [previewData peekInRoom:^(BOOL succeeded) {
-        MXStrongifyAndReturnIfNil(self);
-        [self stopActivityIndicator];
-        [self showRoomPreviewWithData:previewData];
-    }];
+    Analytics.shared.joinedRoomTrigger = AnalyticsJoinedRoomTriggerSpaceHierarchy;
+    
+    self.spaceChildPresenter = [[SpaceChildRoomDetailBridgePresenter alloc] initWithSession:self.mainSession childInfo:childInfo];
+    self.spaceChildPresenter.delegate = self;
+    [self.spaceChildPresenter presentFrom:self sourceView:sourceView animated:YES];
 }
 
 #pragma mark - UISearchBarDelegate
@@ -2214,12 +2230,19 @@ NSString *const RecentsViewControllerDataReadyNotification = @"RecentsViewContro
 - (void)createRoomCoordinatorBridgePresenterDelegate:(CreateRoomCoordinatorBridgePresenter *)coordinatorBridgePresenter didCreateNewRoom:(MXRoom *)room
 {
     [coordinatorBridgePresenter dismissWithAnimated:YES completion:^{
+        Analytics.shared.viewRoomTrigger = AnalyticsViewRoomTriggerCreated;
         [self showRoomWithRoomId:room.roomId inMatrixSession:self.mainSession];
     }];
     coordinatorBridgePresenter = nil;
 }
 
 - (void)createRoomCoordinatorBridgePresenterDelegateDidCancel:(CreateRoomCoordinatorBridgePresenter *)coordinatorBridgePresenter
+{
+    [coordinatorBridgePresenter dismissWithAnimated:YES completion:nil];
+    coordinatorBridgePresenter = nil;
+}
+
+- (void)createRoomCoordinatorBridgePresenterDelegate:(CreateRoomCoordinatorBridgePresenter *)coordinatorBridgePresenter didAddRoomsWithIds:(NSArray<NSString *> *)roomIds
 {
     [coordinatorBridgePresenter dismissWithAnimated:YES completion:nil];
     coordinatorBridgePresenter = nil;
@@ -2404,6 +2427,23 @@ NSString *const RecentsViewControllerDataReadyNotification = @"RecentsViewContro
 {
     [coordinatorBridgePresenter dismissWithAnimated:YES completion:nil];
     self.roomNotificationSettingsCoordinatorBridgePresenter = nil;
+}
+
+#pragma mark - SpaceChildRoomDetailBridgePresenterDelegate
+- (void)spaceChildRoomDetailBridgePresenterDidCancel:(SpaceChildRoomDetailBridgePresenter *)coordinator
+{
+    [self.spaceChildPresenter dismissWithAnimated:YES completion:^{
+        self.spaceChildPresenter = nil;
+    }];
+}
+
+- (void)spaceChildRoomDetailBridgePresenter:(SpaceChildRoomDetailBridgePresenter *)coordinator didOpenRoomWith:(NSString *)roomId
+{
+    [self showRoomWithRoomId:roomId inMatrixSession:self.mainSession];
+
+    [self.spaceChildPresenter dismissWithAnimated:YES completion:^{
+        self.spaceChildPresenter = nil;
+    }];
 }
 
 #pragma mark - Activity Indicator

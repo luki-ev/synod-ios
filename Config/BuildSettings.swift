@@ -355,7 +355,7 @@ final class BuildSettings: NSObject {
     static let authEnableRefreshTokens = false
     
     // MARK: - Onboarding
-    static let onboardingShowAccountPersonalisation = false
+    static let onboardingShowAccountPersonalization = false
     
     // MARK: - Unified Search
     static let unifiedSearchScreenShowPublicDirectory = true
