@@ -139,6 +139,13 @@ $ bundle exec pod repo update
 $ bundle exec pod install
 ```
 
+## Synod.im branding
+
+```
+$ convert *.png -fuzz 20% -fill '#32B4B6' -opaque '#0DBD8B' *.png
+$ sed -i.bak s,0DBD8B,32B4B6,g *.svg
+```
+
 ## Generate IPA
 
 To build the IPA we are currently using [fastlane](https://fastlane.tools/).
