@@ -67,17 +67,9 @@ targets:
     - path: .
       excludes:
         - "Modules/Room/EmojiPicker/Data/EmojiMart/EmojiJSONStore.swift"
-        - "**/*.strings" # Exclude all strings files
+        - "Assets/ar.lproj/**" # RTL is broken so languages are disabled for now
+        - "Assets/he.lproj/**"
     - path: ../RiotShareExtension/Shared
     - path: Modules/MatrixKit
       excludes:
         - "**/*.md" # excludes all files with the .md extension
-
-    # Add separately localizable files
-    # Once a language has enough translations (>80%), it must be declared here
-    - path: Assets/de.lproj/InfoPlist.strings
-    - path: Assets/de.lproj/Localizable.strings
-    - path: Assets/de.lproj/Vector.strings
-    - path: Assets/en.lproj/InfoPlist.strings
-    - path: Assets/en.lproj/Localizable.strings
-    - path: Assets/en.lproj/Vector.strings

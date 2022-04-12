@@ -90,6 +90,12 @@ final class BuildSettings: NSObject {
     static let applicationWebAppUrlString = "https://web.synod.im"
     
     
+    // MARK: - Localization
+    
+    /// Whether to allow the app to use a right to left layout or force left to right for all languages
+    static let disableRightToLeftLayout = true
+    
+    
     // MARK: - Server configuration
     
     // Default servers proposed on the authentication screen
@@ -181,6 +187,7 @@ final class BuildSettings: NSObject {
     static let bugReportEndpointUrlString = "https://bugs.synod.im"
     // Use the name allocated by the bug report server
     static let bugReportApplicationId = "synod-ios"
+    static let bugReportUISIId = "synod-auto-uisi"
     
     
     // MARK: - Integrations
@@ -190,8 +197,10 @@ final class BuildSettings: NSObject {
     static let integrationsScalarWidgetsPaths = [
         "https://dimension.synod.im/widgets",
     ]
-    // Jitsi server used outside integrations to create conference calls from the call button in the timeline
-    static let jitsiServerUrl: URL = URL(string: "https://jitsi.luki.org")!
+    // Jitsi server used outside integrations to create conference calls from the call button in the timeline.
+    // Setting this to nil effectively disables Jitsi conference calls (given that there is no wellknown override).
+    // Note: this will not remove the conference call button, use roomScreenAllowVoIPForNonDirectRoom setting.
+    static let jitsiServerUrl: URL? = URL(string: "https://jitsi.luki.org")
 
     
     // MARK: - Features
@@ -273,7 +282,11 @@ final class BuildSettings: NSObject {
     static let settingsSecurityScreenShowAdvancedUnverifiedDevices:Bool = true
 
     // MARK: - Timeline settings
-    static let roomInputToolbarCompressionMode = MXKRoomInputToolbarCompressionModePrompt
+    static let roomInputToolbarCompressionMode: MediaCompressionMode = .prompt
+    
+    enum MediaCompressionMode {
+        case prompt, small, medium, large, none
+    }
     
     // MARK: - Room Creation Screen
     
@@ -362,6 +375,9 @@ final class BuildSettings: NSObject {
     
     // MARK: - Secrets Recovery
     static let secretsRecoveryAllowReset = true
+    
+    // MARK: - UISI Autoreporting
+    static let cryptoUISIAutoReportingEnabled = false
     
     // MARK: - Polls
     
