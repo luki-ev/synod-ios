@@ -17,7 +17,6 @@
 import XCTest
 import RiotSwiftUI
 
-@available(iOS 14.0, *)
 class AuthenticationRegistrationUITests: MockScreenTest {
 
     override class var screenType: MockScreenState.Type {
@@ -35,12 +34,14 @@ class AuthenticationRegistrationUITests: MockScreenTest {
             let state = "matrix.org"
             validateRegistrationFormIsVisible(for: state)
             validateSSOButtonsAreShown(for: state)
+            validateFallbackButtonIsHidden(for: state)
             
             validateNoErrorsAreShown(for: state)
         case .passwordOnly:
             let state = "a password only server"
             validateRegistrationFormIsVisible(for: state)
             validateSSOButtonsAreHidden(for: state)
+            validateFallbackButtonIsHidden(for: state)
             
             validateNextButtonIsDisabled(for: state)
             
@@ -49,6 +50,7 @@ class AuthenticationRegistrationUITests: MockScreenTest {
             let state = "a password only server with credentials entered"
             validateRegistrationFormIsVisible(for: state)
             validateSSOButtonsAreHidden(for: state)
+            validateFallbackButtonIsHidden(for: state)
             
             validateNextButtonIsEnabled(for: state)
             
@@ -57,6 +59,7 @@ class AuthenticationRegistrationUITests: MockScreenTest {
             let state = "a password only server with an invalid username"
             validateRegistrationFormIsVisible(for: state)
             validateSSOButtonsAreHidden(for: state)
+            validateFallbackButtonIsHidden(for: state)
             
             validateNextButtonIsDisabled(for: state)
             
@@ -65,6 +68,12 @@ class AuthenticationRegistrationUITests: MockScreenTest {
             let state = "an SSO only server"
             validateRegistrationFormIsHidden(for: state)
             validateSSOButtonsAreShown(for: state)
+            validateFallbackButtonIsHidden(for: state)
+        case .fallback:
+            let state = "fallback"
+            validateRegistrationFormIsHidden(for: state)
+            validateSSOButtonsAreHidden(for: state)
+            validateFallbackButtonIsShown(for: state)
         }
     }
     
@@ -88,6 +97,21 @@ class AuthenticationRegistrationUITests: MockScreenTest {
         XCTAssertFalse(usernameTextField.exists, "Username input should not be shown for \(state).")
         XCTAssertFalse(passwordTextField.exists, "Password input should not be shown for \(state).")
         XCTAssertFalse(nextButton.exists, "The next button should not be shown for \(state).")
+    }
+
+    /// Checks that the fallback button is hidden.
+    func validateFallbackButtonIsHidden(for state: String) {
+        let fallbackButton = app.buttons["fallbackButton"]
+
+        XCTAssertFalse(fallbackButton.exists, "The fallback button should not be shown for \(state).")
+    }
+
+    /// Checks that the fallback button is hidden.
+    func validateFallbackButtonIsShown(for state: String) {
+        let fallbackButton = app.buttons["fallbackButton"]
+
+        XCTAssertTrue(fallbackButton.exists, "The fallback button should be shown for \(state).")
+        XCTAssertTrue(fallbackButton.isEnabled, "The fallback button should be enabled for \(state).")
     }
     
     /// Checks that there is at least one SSO button shown on the screen.

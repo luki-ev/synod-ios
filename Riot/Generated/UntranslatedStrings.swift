@@ -10,25 +10,33 @@ import Foundation
 
 // swiftlint:disable function_parameter_count identifier_name line_length type_body_length
 public extension VectorL10n {
-  /// Join millions for free on the largest public server
-  static var authenticationRegistrationMatrixDescription: String { 
-    return VectorL10n.tr("Untranslated", "authentication_registration_matrix_description") 
+  /// Your account is not created yet. Stop the registration process?
+  static var authenticationCancelFlowConfirmationMessage: String { 
+    return VectorL10n.tr("Untranslated", "authentication_cancel_flow_confirmation_message") 
+  }
+  /// Forgot password
+  static var authenticationLoginForgotPassword: String { 
+    return VectorL10n.tr("Untranslated", "authentication_login_forgot_password") 
+  }
+  /// Welcome back!
+  static var authenticationLoginTitle: String { 
+    return VectorL10n.tr("Untranslated", "authentication_login_title") 
+  }
+  /// Username or Email
+  static var authenticationLoginUsername: String { 
+    return VectorL10n.tr("Untranslated", "authentication_login_username") 
+  }
+  /// This server would like to make sure you are not a robot
+  static var authenticationRecaptchaMessage: String { 
+    return VectorL10n.tr("Untranslated", "authentication_recaptcha_message") 
   }
   /// We’ll need some info to get you set up.
   static var authenticationRegistrationMessage: String { 
     return VectorL10n.tr("Untranslated", "authentication_registration_message") 
   }
-  /// Password
-  static var authenticationRegistrationPassword: String { 
-    return VectorL10n.tr("Untranslated", "authentication_registration_password") 
-  }
   /// Must be 8 characters or more
   static var authenticationRegistrationPasswordFooter: String { 
     return VectorL10n.tr("Untranslated", "authentication_registration_password_footer") 
-  }
-  /// Choose your server to store your data
-  static var authenticationRegistrationServerTitle: String { 
-    return VectorL10n.tr("Untranslated", "authentication_registration_server_title") 
   }
   /// Create your account
   static var authenticationRegistrationTitle: String { 
@@ -42,21 +50,13 @@ public extension VectorL10n {
   static var authenticationRegistrationUsernameFooter: String { 
     return VectorL10n.tr("Untranslated", "authentication_registration_username_footer") 
   }
-  /// Get in touch
-  static var authenticationServerSelectionEmsButton: String { 
-    return VectorL10n.tr("Untranslated", "authentication_server_selection_ems_button") 
+  /// Join millions for free on the largest public server
+  static var authenticationServerInfoMatrixDescription: String { 
+    return VectorL10n.tr("Untranslated", "authentication_server_info_matrix_description") 
   }
-  /// element.io/ems
-  static var authenticationServerSelectionEmsLink: String { 
-    return VectorL10n.tr("Untranslated", "authentication_server_selection_ems_link") 
-  }
-  /// Element Matrix Services (EMS) is a robust and reliable hosting service for fast, secure real time communication. Find out how on
-  static var authenticationServerSelectionEmsMessage: String { 
-    return VectorL10n.tr("Untranslated", "authentication_server_selection_ems_message") 
-  }
-  /// Want to host your own server?
-  static var authenticationServerSelectionEmsTitle: String { 
-    return VectorL10n.tr("Untranslated", "authentication_server_selection_ems_title") 
+  /// Choose your server to store your data
+  static var authenticationServerInfoTitle: String { 
+    return VectorL10n.tr("Untranslated", "authentication_server_info_title") 
   }
   /// Cannot find a server at this URL, please check it is correct.
   static var authenticationServerSelectionGenericError: String { 
@@ -77,6 +77,78 @@ public extension VectorL10n {
   /// Choose your server
   static var authenticationServerSelectionTitle: String { 
     return VectorL10n.tr("Untranslated", "authentication_server_selection_title") 
+  }
+  /// Please read through T&C. You must accept in order to continue.
+  static var authenticationTermsMessage: String { 
+    return VectorL10n.tr("Untranslated", "authentication_terms_message") 
+  }
+  /// Unable to find the selected policy. Please try again later.
+  static var authenticationTermsPolicyUrlError: String { 
+    return VectorL10n.tr("Untranslated", "authentication_terms_policy_url_error") 
+  }
+  /// Privacy policy
+  static var authenticationTermsTitle: String { 
+    return VectorL10n.tr("Untranslated", "authentication_terms_title") 
+  }
+  /// This will help verify your account and enables password recovery.
+  static var authenticationVerifyEmailInputMessage: String { 
+    return VectorL10n.tr("Untranslated", "authentication_verify_email_input_message") 
+  }
+  /// Enter your email address
+  static var authenticationVerifyEmailInputTitle: String { 
+    return VectorL10n.tr("Untranslated", "authentication_verify_email_input_title") 
+  }
+  /// Email Address
+  static var authenticationVerifyEmailTextFieldPlaceholder: String { 
+    return VectorL10n.tr("Untranslated", "authentication_verify_email_text_field_placeholder") 
+  }
+  /// Resend email
+  static var authenticationVerifyEmailWaitingButton: String { 
+    return VectorL10n.tr("Untranslated", "authentication_verify_email_waiting_button") 
+  }
+  /// Did not receive an email?
+  static var authenticationVerifyEmailWaitingHint: String { 
+    return VectorL10n.tr("Untranslated", "authentication_verify_email_waiting_hint") 
+  }
+  /// To confirm your email address, tap the button in the email we just sent to %@
+  static func authenticationVerifyEmailWaitingMessage(_ p1: String) -> String {
+    return VectorL10n.tr("Untranslated", "authentication_verify_email_waiting_message", p1)
+  }
+  /// Check your email to verify.
+  static var authenticationVerifyEmailWaitingTitle: String { 
+    return VectorL10n.tr("Untranslated", "authentication_verify_email_waiting_title") 
+  }
+  /// This will help verify your account and enables password recovery.
+  static var authenticationVerifyMsisdnInputMessage: String { 
+    return VectorL10n.tr("Untranslated", "authentication_verify_msisdn_input_message") 
+  }
+  /// Enter your phone number
+  static var authenticationVerifyMsisdnInputTitle: String { 
+    return VectorL10n.tr("Untranslated", "authentication_verify_msisdn_input_title") 
+  }
+  /// Invalid phone number
+  static var authenticationVerifyMsisdnInvalidPhoneNumber: String { 
+    return VectorL10n.tr("Untranslated", "authentication_verify_msisdn_invalid_phone_number") 
+  }
+  /// Verification Code
+  static var authenticationVerifyMsisdnOtpTextFieldPlaceholder: String { 
+    return VectorL10n.tr("Untranslated", "authentication_verify_msisdn_otp_text_field_placeholder") 
+  }
+  /// Phone Number
+  static var authenticationVerifyMsisdnTextFieldPlaceholder: String { 
+    return VectorL10n.tr("Untranslated", "authentication_verify_msisdn_text_field_placeholder") 
+  }
+  /// Resend code
+  static var authenticationVerifyMsisdnWaitingButton: String { 
+    return VectorL10n.tr("Untranslated", "authentication_verify_msisdn_waiting_button") 
+  }
+  /// We just sent a code to %@. Enter it  below to verify it’s you.
+  static func authenticationVerifyMsisdnWaitingMessage(_ p1: String) -> String {
+    return VectorL10n.tr("Untranslated", "authentication_verify_msisdn_waiting_message", p1)
+  }
+  /// Confirm your phone number
+  static var authenticationVerifyMsisdnWaitingTitle: String { 
+    return VectorL10n.tr("Untranslated", "authentication_verify_msisdn_waiting_title") 
   }
   /// Choose from files
   static var imagePickerActionFiles: String { 

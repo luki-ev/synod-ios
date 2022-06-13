@@ -45,7 +45,7 @@ final class LegacyAuthenticationCoordinator: NSObject, AuthenticationCoordinator
 
     // Must be used only internally
     var childCoordinators: [Coordinator] = []
-    var completion: ((AuthenticationCoordinatorResult) -> Void)?
+    var callback: ((AuthenticationCoordinatorResult) -> Void)?
     
     var customServerFieldsVisible = false {
         didSet {
@@ -73,16 +73,18 @@ final class LegacyAuthenticationCoordinator: NSObject, AuthenticationCoordinator
     // MARK: - Public
     
     func start() {
-        // Listen to the end of the authentication flow
+        // Listen to the end of the authentication flow.
         authenticationViewController.authVCDelegate = self
+        // Listen for changes from deep links.
+        AuthenticationService.shared.delegate = self
     }
     
     func toPresentable() -> UIViewController {
         return self.authenticationViewController
     }
     
-    func update(authenticationType: MXKAuthenticationType) {
-        authenticationViewController.authType = authenticationType
+    func update(authenticationFlow: AuthenticationFlow) {
+        authenticationViewController.authType = authenticationFlow.mxkType
     }
     
     func update(externalRegistrationParameters: [AnyHashable: Any]) {
@@ -95,10 +97,6 @@ final class LegacyAuthenticationCoordinator: NSObject, AuthenticationCoordinator
     
     func updateHomeserver(_ homeserver: String?, andIdentityServer identityServer: String?) {
         authenticationViewController.showCustomHomeserver(homeserver, andIdentityServer: identityServer)
-    }
-    
-    func continueSSOLogin(withToken loginToken: String, transactionID: String) -> Bool {
-        authenticationViewController.continueSSOLogin(withToken: loginToken, txnId: transactionID)
     }
     
     func presentPendingScreensIfNecessary() {
@@ -143,13 +141,29 @@ final class LegacyAuthenticationCoordinator: NSObject, AuthenticationCoordinator
     }
     
     private func authenticationDidComplete() {
-        completion?(.didComplete)
+        callback?(.didComplete)
+    }
+}
+
+// MARK: - AuthenticationServiceDelegate
+extension LegacyAuthenticationCoordinator: AuthenticationServiceDelegate {
+    func authenticationService(_ service: AuthenticationService, didReceive ssoLoginToken: String, with transactionID: String) -> Bool {
+        authenticationViewController.continueSSOLogin(withToken: ssoLoginToken, txnId: transactionID)
     }
 }
 
 // MARK: - AuthenticationViewControllerDelegate
 extension LegacyAuthenticationCoordinator: AuthenticationViewControllerDelegate {
-    func authenticationViewController(_ authenticationViewController: AuthenticationViewController!, didLoginWith session: MXSession!, andPassword password: String!) {
+    func authenticationViewController(_ authenticationViewController: AuthenticationViewController,
+                                      didLoginWith session: MXSession!,
+                                      andPassword password: String?,
+                                      orSSOIdentityProvider identityProvider: SSOIdentityProvider?) {
+        // Sanity check
+        guard let session = session else {
+            MXLog.failure("[LegacyAuthenticationCoordinator] authenticationViewController(_:didLoginWith:) The MXSession should not be nil.")
+            return
+        }
+        
         self.session = session
         
         if canPresentAdditionalScreens {
@@ -177,8 +191,18 @@ extension LegacyAuthenticationCoordinator: AuthenticationViewControllerDelegate 
         verificationListener.start()
         self.verificationListener = verificationListener
         
-
-        completion?(.didLogin(session: session, authenticationType: authenticationViewController.authType))
+        let authenticationType: AuthenticationType
+        if let identityProvider = identityProvider {
+            authenticationType = .sso(identityProvider)
+        } else if !password.isEmptyOrNil {
+            authenticationType = .password
+        } else {
+            authenticationType = .other
+        }
+        
+        callback?(.didLogin(session: session,
+                            authenticationFlow: authenticationViewController.authType.flow,
+                            authenticationType: authenticationType))
     }
 }
 
@@ -208,5 +232,31 @@ extension LegacyAuthenticationCoordinator: UIAdaptivePresentationControllerDeleg
     func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
         // Prevent Key Verification from using swipe to dismiss
         return false
+    }
+}
+
+
+fileprivate extension AuthenticationFlow {
+    var mxkType: MXKAuthenticationType {
+        switch self {
+        case .login:
+            return .login
+        case .register:
+            return .register
+        }
+    }
+}
+
+fileprivate extension MXKAuthenticationType {
+    var flow: AuthenticationFlow {
+        switch self {
+        case .register:
+            return .register
+        case .login, .forgotPassword:
+            return .login
+        @unknown default:
+            MXLog.failure("[MXKAuthenticationType] Unknown type exposed to Swift.")
+            return .login
+        }
     }
 }

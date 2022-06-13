@@ -17,29 +17,23 @@
 import SwiftUI
 import Combine
 
-@available(iOS 14, *)
 typealias AuthenticationRegistrationViewModelType = StateStoreViewModel<AuthenticationRegistrationViewState,
                                                                         Never,
                                                                         AuthenticationRegistrationViewAction>
 
-
-@available(iOS 14, *)
 class AuthenticationRegistrationViewModel: AuthenticationRegistrationViewModelType, AuthenticationRegistrationViewModelProtocol {
 
     // MARK: - Properties
 
     // MARK: Public
 
-    @MainActor var completion: ((AuthenticationRegistrationViewModelResult) -> Void)?
+    var callback: (@MainActor (AuthenticationRegistrationViewModelResult) -> Void)?
 
     // MARK: - Setup
 
-    init(homeserverAddress: String, showRegistrationForm: Bool = true, ssoIdentityProviders: [SSOIdentityProvider]) {
+    init(homeserver: AuthenticationHomeserverViewData) {
         let bindings = AuthenticationRegistrationBindings()
-        let viewState = AuthenticationRegistrationViewState(homeserverAddress: HomeserverAddress.displayable(homeserverAddress),
-                                                            showRegistrationForm: showRegistrationForm,
-                                                            ssoIdentityProviders: ssoIdentityProviders,
-                                                            bindings: bindings)
+        let viewState = AuthenticationRegistrationViewState(homeserver: homeserver, bindings: bindings)
         
         super.init(initialViewState: viewState)
     }
@@ -47,32 +41,26 @@ class AuthenticationRegistrationViewModel: AuthenticationRegistrationViewModelTy
     // MARK: - Public
 
     override func process(viewAction: AuthenticationRegistrationViewAction) {
-        Task {
-            await MainActor.run {
-                switch viewAction {
-                case .selectServer:
-                    completion?(.selectServer)
-                case .validateUsername:
-                    state.hasEditedUsername = true
-                    completion?(.validateUsername(state.bindings.username))
-                case .enablePasswordValidation:
-                    state.hasEditedPassword = true
-                case .clearUsernameError:
-                    guard state.usernameErrorMessage != nil else { return }
-                    state.usernameErrorMessage = nil
-                case .next:
-                    completion?(.createAccount(username: state.bindings.username, password: state.bindings.password))
-                case .continueWithSSO(let id):
-                    break
-                }
-            }
+        switch viewAction {
+        case .selectServer:
+            Task { await callback?(.selectServer) }
+        case .validateUsername:
+            Task { await validateUsername() }
+        case .enablePasswordValidation:
+            Task { await enablePasswordValidation() }
+        case .clearUsernameError:
+            Task { await clearUsernameError() }
+        case .next:
+            Task { await callback?(.createAccount(username: state.bindings.username, password: state.bindings.password)) }
+        case .continueWithSSO(let provider):
+            Task { await callback?(.continueWithSSO(provider)) }
+        case .fallback:
+            Task { await callback?(.fallback) }
         }
     }
     
-    @MainActor func update(homeserverAddress: String, showRegistrationForm: Bool, ssoIdentityProviders: [SSOIdentityProvider]) {
-        state.homeserverAddress = HomeserverAddress.displayable(homeserverAddress)
-        state.showRegistrationForm = showRegistrationForm
-        state.ssoIdentityProviders = ssoIdentityProviders
+    @MainActor func update(homeserver: AuthenticationHomeserverViewData) {
+        state.homeserver = homeserver
     }
     
     @MainActor func displayError(_ type: AuthenticationRegistrationErrorType) {
@@ -94,5 +82,28 @@ class AuthenticationRegistrationViewModel: AuthenticationRegistrationViewModelTy
         case .unknown:
             state.bindings.alertInfo = AlertInfo(id: type)
         }
+    }
+    
+    // MARK: - Private
+    
+    /// Validate the supplied username with the homeserver.
+    @MainActor private func validateUsername() {
+        if !state.hasEditedUsername {
+            state.hasEditedUsername = true
+        }
+        
+        callback?(.validateUsername(state.bindings.username))
+    }
+    
+    /// Allows password validation to take place.
+    @MainActor private func enablePasswordValidation() {
+        guard !state.hasEditedPassword else { return }
+        state.hasEditedPassword = true
+    }
+    
+    /// Clear any errors being shown in the username text field footer.
+    @MainActor private func clearUsernameError() {
+        guard state.usernameErrorMessage != nil else { return }
+        state.usernameErrorMessage = nil
     }
 }

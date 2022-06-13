@@ -87,6 +87,9 @@ final class AppCoordinator: NSObject, AppCoordinatorType {
         // Setup navigation router store
         _ = NavigationRouterStore.shared
         
+        // Setup user location services
+        _ = UserLocationServiceProvider.shared
+        
         if BuildSettings.enableSideMenu {
             self.addSideMenu()
         }
@@ -186,8 +189,8 @@ final class AppCoordinator: NSObject, AppCoordinatorType {
         let canOpenLink: Bool
         
         switch deepLinkOption {
-        case .connect(let loginToken, let transactionId):
-            canOpenLink = self.legacyAppDelegate.continueSSOLogin(withToken: loginToken, txnId: transactionId)
+        case .connect(let loginToken, let transactionID):
+            canOpenLink = AuthenticationService.shared.continueSSOLogin(with: loginToken, and: transactionID)
         }
         
         return canOpenLink

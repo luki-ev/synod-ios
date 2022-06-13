@@ -18,7 +18,6 @@ import SwiftUI
 import CommonKit
 import MatrixSDK
 
-@available(iOS 14.0, *)
 struct AuthenticationRegistrationCoordinatorParameters {
     let navigationRouter: NavigationRouterType
     let authenticationService: AuthenticationService
@@ -29,13 +28,14 @@ struct AuthenticationRegistrationCoordinatorParameters {
 }
 
 enum AuthenticationRegistrationCoordinatorResult {
-    /// The user would like to select another server.
-    case selectServer
+    /// Continue using the supplied SSO provider.
+    case continueWithSSO(SSOIdentityProvider)
     /// The screen completed with the associated registration result.
-    case completed(RegistrationResult)
+    case completed(result: RegistrationResult, password: String)
+    /// Continue using the fallback
+    case fallback
 }
 
-@available(iOS 14.0, *)
 final class AuthenticationRegistrationCoordinator: Coordinator, Presentable {
     
     // MARK: - Properties
@@ -57,26 +57,23 @@ final class AuthenticationRegistrationCoordinator: Coordinator, Presentable {
     private var waitingIndicator: UserIndicator?
     
     /// The authentication service used for the registration.
-    var authenticationService: AuthenticationService { parameters.authenticationService }
+    private var authenticationService: AuthenticationService { parameters.authenticationService }
     /// The wizard used to handle the registration flow. May be `nil` when only SSO is supported.
-    var registrationWizard: RegistrationWizard?
+    private var registrationWizard: RegistrationWizard? { parameters.authenticationService.registrationWizard }
     
     // MARK: Public
 
     // Must be used only internally
     var childCoordinators: [Coordinator] = []
-    @MainActor var completion: ((AuthenticationRegistrationCoordinatorResult) -> Void)?
+    var callback: (@MainActor (AuthenticationRegistrationCoordinatorResult) -> Void)?
     
     // MARK: - Setup
     
     @MainActor init(parameters: AuthenticationRegistrationCoordinatorParameters) {
         self.parameters = parameters
-        self.registrationWizard = parameters.authenticationService.registrationWizard
         
         let homeserver = parameters.authenticationService.state.homeserver
-        let viewModel = AuthenticationRegistrationViewModel(homeserverAddress: homeserver.addressFromUser ?? homeserver.address,
-                                                            showRegistrationForm: homeserver.registrationFlow != nil,
-                                                            ssoIdentityProviders: parameters.loginMode.ssoIdentityProviders ?? [])
+        let viewModel = AuthenticationRegistrationViewModel(homeserver: homeserver.viewData)
         authenticationRegistrationViewModel = viewModel
         
         let view = AuthenticationRegistrationScreen(viewModel: viewModel.context)
@@ -89,23 +86,8 @@ final class AuthenticationRegistrationCoordinator: Coordinator, Presentable {
     
     // MARK: - Public
     func start() {
-        Task {
-            await MainActor.run {
-                MXLog.debug("[AuthenticationRegistrationCoordinator] did start.")
-                authenticationRegistrationViewModel.completion = { [weak self] result in
-                    guard let self = self else { return }
-                    MXLog.debug("[AuthenticationRegistrationCoordinator] AuthenticationRegistrationViewModel did complete with result: \(result).")
-                    switch result {
-                    case .selectServer:
-                        self.presentServerSelectionScreen()
-                    case.validateUsername(let username):
-                        self.validateUsername(username)
-                    case .createAccount(let username, let password):
-                        self.createAccount(username: username, password: password)
-                    }
-                }
-            }
-        }
+        MXLog.debug("[AuthenticationRegistrationCoordinator] did start.")
+        Task { await setupViewModel() }
     }
     
     func toPresentable() -> UIViewController {
@@ -114,9 +96,30 @@ final class AuthenticationRegistrationCoordinator: Coordinator, Presentable {
     
     // MARK: - Private
     
+    /// Set up the view model. This method is extracted from `start()` so it can run on the `MainActor`.
+    @MainActor private func setupViewModel() {
+        authenticationRegistrationViewModel.callback = { [weak self] result in
+            guard let self = self else { return }
+            MXLog.debug("[AuthenticationRegistrationCoordinator] AuthenticationRegistrationViewModel did complete with result: \(result).")
+            
+            switch result {
+            case .selectServer:
+                self.presentServerSelectionScreen()
+            case.validateUsername(let username):
+                self.validateUsername(username)
+            case .createAccount(let username, let password):
+                self.createAccount(username: username, password: password)
+            case .continueWithSSO(let provider):
+                self.callback?(.continueWithSSO(provider))
+            case .fallback:
+                self.callback?(.fallback)
+            }
+        }
+    }
+    
     /// Show a blocking activity indicator whilst saving.
-    @MainActor private func startLoading(label: String? = nil) {
-        waitingIndicator = indicatorPresenter.present(.loading(label: label ?? VectorL10n.loading, isInteractionBlocking: true))
+    @MainActor private func startLoading() {
+        waitingIndicator = indicatorPresenter.present(.loading(label: VectorL10n.loading, isInteractionBlocking: true))
     }
     
     /// Hide the currently displayed activity indicator.
@@ -152,17 +155,16 @@ final class AuthenticationRegistrationCoordinator: Coordinator, Presentable {
             return
         }
         
-        // reAuthHelper.data = state.password
-        let deviceDisplayName = UIDevice.current.isPhone ? VectorL10n.loginMobileDevice : VectorL10n.loginTabletDevice
-        
         startLoading()
         
         currentTask = Task { [weak self] in
             do {
-                let result = try await registrationWizard.createAccount(username: username, password: password, initialDeviceDisplayName: deviceDisplayName)
+                let result = try await registrationWizard.createAccount(username: username,
+                                                                        password: password,
+                                                                        initialDeviceDisplayName: UIDevice.current.initialDisplayName)
                 
                 guard !Task.isCancelled else { return }
-                completion?(.completed(result))
+                callback?(.completed(result: result, password: password))
                 
                 self?.stopLoading()
             } catch {
@@ -183,8 +185,6 @@ final class AuthenticationRegistrationCoordinator: Coordinator, Presentable {
             switch authenticationError {
             case .invalidHomeserver:
                 authenticationRegistrationViewModel.displayError(.invalidHomeserver)
-            case .dictionaryError:
-                authenticationRegistrationViewModel.displayError(.unknown)
             case .loginFlowNotCalled:
                 #warning("Reset the flow")
             case .missingMXRestClient:
@@ -197,7 +197,7 @@ final class AuthenticationRegistrationCoordinator: Coordinator, Presentable {
             switch registrationError {
             case .registrationDisabled:
                 authenticationRegistrationViewModel.displayError(.registrationDisabled)
-            case .createAccountNotCalled, .missingThreePIDData, .missingThreePIDURL, .threePIDClientFailure, .threePIDValidationFailure:
+            case .createAccountNotCalled, .missingThreePIDData, .missingThreePIDURL, .threePIDClientFailure, .threePIDValidationFailure, .waitingForThreePIDValidation, .invalidPhoneNumber:
                 // Shouldn't happen at this stage
                 authenticationRegistrationViewModel.displayError(.unknown)
             }
@@ -209,11 +209,12 @@ final class AuthenticationRegistrationCoordinator: Coordinator, Presentable {
     
     /// Presents the server selection screen as a modal.
     @MainActor private func presentServerSelectionScreen() {
-        MXLog.debug("[AuthenticationCoordinator] showServerSelectionScreen")
+        MXLog.debug("[AuthenticationRegistrationCoordinator] presentServerSelectionScreen")
         let parameters = AuthenticationServerSelectionCoordinatorParameters(authenticationService: authenticationService,
+                                                                            flow: .register,
                                                                             hasModalPresentation: true)
         let coordinator = AuthenticationServerSelectionCoordinator(parameters: parameters)
-        coordinator.completion = { [weak self, weak coordinator] result in
+        coordinator.callback = { [weak self, weak coordinator] result in
             guard let self = self, let coordinator = coordinator else { return }
             self.serverSelectionCoordinator(coordinator, didCompleteWith: result)
         }
@@ -232,11 +233,7 @@ final class AuthenticationRegistrationCoordinator: Coordinator, Presentable {
                                                        didCompleteWith result: AuthenticationServerSelectionCoordinatorResult) {
         if result == .updated {
             let homeserver = authenticationService.state.homeserver
-            authenticationRegistrationViewModel.update(homeserverAddress: homeserver.addressFromUser ?? homeserver.address,
-                                                       showRegistrationForm: homeserver.registrationFlow != nil,
-                                                       ssoIdentityProviders: homeserver.preferredLoginMode.ssoIdentityProviders ?? [])
-            
-            self.registrationWizard = authenticationService.registrationWizard
+            authenticationRegistrationViewModel.update(homeserver: homeserver.viewData)
         }
         
         navigationRouter.dismissModule(animated: true) { [weak self] in

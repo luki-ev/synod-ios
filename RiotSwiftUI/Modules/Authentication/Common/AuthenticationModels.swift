@@ -16,16 +16,24 @@
 
 import Foundation
 
-/// A value that represents the type of authentication flow being used.
+/// A value that represents an authentication flow as either login or register.
 enum AuthenticationFlow {
     case login
-    case registration
+    case register
+}
+
+/// A value that represents the type of authentication used.
+enum AuthenticationType {
+    /// A username and password.
+    case password
+    /// SSO with the associated provider
+    case sso(SSOIdentityProvider)
+    /// Some other method such as the fall back page.
+    case other
 }
 
 /// Errors that can be thrown from `AuthenticationService`.
 enum AuthenticationError: String, LocalizedError {
-    /// A failure to convert a struct into a dictionary.
-    case dictionaryError
     case invalidHomeserver
     case loginFlowNotCalled
     case missingMXRestClient
@@ -48,11 +56,17 @@ enum RegistrationError: String, LocalizedError {
     case missingThreePIDURL
     case threePIDValidationFailure
     case threePIDClientFailure
+    case waitingForThreePIDValidation
+    case invalidPhoneNumber
     
     var errorDescription: String? {
         switch self {
         case .registrationDisabled:
             return VectorL10n.loginErrorRegistrationIsNotSupported
+        case .threePIDValidationFailure, .threePIDClientFailure:
+            return VectorL10n.authMsisdnValidationError
+        case .invalidPhoneNumber:
+            return VectorL10n.authenticationVerifyMsisdnInvalidPhoneNumber
         default:
             return VectorL10n.errorCommonMessage
         }
@@ -61,12 +75,19 @@ enum RegistrationError: String, LocalizedError {
 
 /// Errors that can be thrown from `LoginWizard`
 enum LoginError: String, Error {
-    case unimplemented
+    case resetPasswordNotStarted
+}
+
+struct HomeserverAddress {
+    /// Ensures the address contains a scheme, otherwise makes it `https`.
+    static func sanitized(_ address: String) -> String {
+        !address.contains("://") ? "https://\(address.lowercased())" : address.lowercased()
+    }
 }
 
 /// Represents an SSO Identity Provider as provided in a login flow.
-struct SSOIdentityProvider: Identifiable {
-    /// The identifier field (id field in JSON) is the Identity Provider identifier used for the SSO Web page redirection `/login/sso/redirect/{idp_id}`.
+@objc class SSOIdentityProvider: NSObject, Identifiable {
+    /// The id field is the Identity Provider identifier used for the SSO Web page redirection `/login/sso/redirect/{idp_id}`.
     let id: String
     /// The name field is a human readable string intended to be printed by the client.
     let name: String
@@ -74,4 +95,11 @@ struct SSOIdentityProvider: Identifiable {
     let brand: String?
     /// The icon field is an optional field that points to an icon representing the identity provider. If present then it must be an HTTPS URL to an image resource.
     let iconURL: String?
+    
+    init(id: String, name: String, brand: String?, iconURL: String?) {
+        self.id = id
+        self.name = name
+        self.brand = brand
+        self.iconURL = iconURL
+    }
 }

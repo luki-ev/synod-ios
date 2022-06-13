@@ -30,8 +30,8 @@ struct RoomTimelineLocationViewData {
     let mapStyleURL: URL
 }
 
-struct LiveLocationBannerViewData {
-    let placeholderIcon: UIImage?
+struct TimelineLiveLocationViewData {
+    let status: LiveLocationSharingStatus
     let iconTint: UIColor
     let title: String
     let titleColor: UIColor
@@ -48,8 +48,11 @@ struct LiveLocationBannerViewData {
         return rightButtonTitle != nil
     }
     
-    var showPlaceholderImage: Bool {
-        return placeholderIcon != nil
+    var showMap: Bool {
+        guard case .started(_, _) = status else {
+            return false
+        }
+        return true
     }
 }
 
@@ -92,19 +95,21 @@ class RoomTimelineLocationView: UIView, NibLoadable, Themable, MGLMapViewDelegat
     
     // MARK: - Live Location
     @IBOutlet private var placeholderBackground: UIImageView!
-    @IBOutlet private var placeholderIcon: UIImageView!
+    @IBOutlet private var placeholderIconView: UIImageView!
     @IBOutlet private var liveLocationContainerView: UIView!
-    @IBOutlet private var liveLocationImageView: UIImageView!
+    @IBOutlet private var liveLocationIcon: UIImageView!
+    @IBOutlet private var liveLocationIconBackgroundView: UIView!
     @IBOutlet private var liveLocationStatusLabel: UILabel!
     @IBOutlet private var liveLocationTimerLabel: UILabel!
     @IBOutlet private var rightButton: UIButton!
-    
-    
+    @IBOutlet private var activityIndicatorView: UIActivityIndicatorView!
     
     private var mapView: MGLMapView!
     private var annotationView: LocationMarkerView?
     private static var usernameColorGenerator = UserNameColorGenerator()
     private var theme: Theme!
+    private var placeholderBackgroundImage: UIImage?
+    private var placeholderIcon: UIImage?
     
     private lazy var incomingTimerFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -160,9 +165,10 @@ class RoomTimelineLocationView: UIView, NibLoadable, Themable, MGLMapViewDelegat
     private func displayLocation(_ location: CLLocationCoordinate2D?,
                                  userAvatarData: AvatarViewData? = nil,
                                  mapStyleURL: URL,
-                                 bannerViewData: LiveLocationBannerViewData? = nil) {
+                                 bannerViewData: TimelineLiveLocationViewData? = nil) {
         
         if let location = location {
+            mapView.isHidden = false
             mapView.styleURL = mapStyleURL
             
             annotationView = LocationMarkerView.loadFromNib()
@@ -188,14 +194,17 @@ class RoomTimelineLocationView: UIView, NibLoadable, Themable, MGLMapViewDelegat
         // Configure live location banner
         guard let bannerViewData = bannerViewData else {
             liveLocationContainerView.isHidden = true
+            placeholderBackground.isHidden = true
+            placeholderIconView.isHidden = true
             return
         }
         
         liveLocationContainerView.isHidden = false
-        liveLocationContainerView.backgroundColor = theme.colors.background.withAlphaComponent(0.85)
+        liveLocationContainerView.backgroundColor = theme.colors.background.withAlphaComponent(0.75)
         
-        liveLocationImageView.image = Asset.Images.locationLiveCellIcon.image
-        liveLocationImageView.tintColor = bannerViewData.iconTint
+        liveLocationIcon.image = Asset.Images.locationLiveCellIcon.image
+        liveLocationIcon.tintColor = bannerViewData.iconTint
+        liveLocationIconBackgroundView.isHidden = !bannerViewData.showMap // Add white background when cell is not in starting or ended state
         
         liveLocationStatusLabel.text = bannerViewData.title
         liveLocationStatusLabel.textColor = bannerViewData.titleColor
@@ -208,19 +217,30 @@ class RoomTimelineLocationView: UIView, NibLoadable, Themable, MGLMapViewDelegat
         rightButton.isHidden = !bannerViewData.showRightButton
         rightButton.tag = bannerViewData.rightButtonTag.rawValue
         
-        placeholderBackground.isHidden = !bannerViewData.showPlaceholderImage
-        placeholderIcon.image = bannerViewData.placeholderIcon
-        placeholderIcon.isHidden = !bannerViewData.showPlaceholderImage
-        placeholderBackground.isHidden = !bannerViewData.showPlaceholderImage
-        mapView.isHidden = bannerViewData.showPlaceholderImage
+        placeholderBackground.isHidden = bannerViewData.showMap
+        placeholderIconView.image = placeholderIcon
+        placeholderIconView.isHidden = bannerViewData.showMap
+        placeholderBackground.isHidden = bannerViewData.showMap
+        placeholderBackground.image = placeholderBackgroundImage
+        mapView.isHidden = !bannerViewData.showMap
+        
+        switch bannerViewData.status {
+        case .starting:
+            placeholderIconView.isHidden = true
+            activityIndicatorView.isHidden = false
+            activityIndicatorView.startAnimating()
+        default:
+            activityIndicatorView.isHidden = true
+            activityIndicatorView.stopAnimating()
+        }
     }
     
-    private func liveLocationBannerViewData(from viewState: TimelineLiveLocationViewState) -> LiveLocationBannerViewData {
+    private func liveLocationBannerViewData(from viewState: TimelineLiveLocationViewState) -> TimelineLiveLocationViewData {
         
+        var status: LiveLocationSharingStatus
         let iconTint: UIColor
         let title: String
         var titleColor: UIColor = theme.colors.primaryContent
-        var placeholderIcon: UIImage?
         var timeLeftString: String?
         var rightButtonTitle: String?
         var rightButtonTag: RightButtonTag = .stopSharing
@@ -228,12 +248,12 @@ class RoomTimelineLocationView: UIView, NibLoadable, Themable, MGLMapViewDelegat
 
         switch viewState {
         case .incoming(let liveLocationSharingStatus):
+            status = liveLocationSharingStatus
             switch liveLocationSharingStatus {
             case .starting:
-                iconTint = theme.colors.tertiaryContent
+                iconTint = theme.colors.quarterlyContent
                 title = VectorL10n.locationSharingLiveLoading
                 titleColor = theme.colors.tertiaryContent
-                placeholderIcon = Asset.Images.locationLiveCellLoadingIcon.image
             case .started(let coordinate, let timeLeft):
                 iconTint = theme.roomCellLocalisationIconStartedColor
                 title = VectorL10n.liveLocationSharingBannerTitle
@@ -245,18 +265,17 @@ class RoomTimelineLocationView: UIView, NibLoadable, Themable, MGLMapViewDelegat
                 rightButtonTitle = VectorL10n.retry
                 rightButtonTag = .retrySharing
             case .stopped:
-                iconTint = theme.colors.tertiaryContent
+                iconTint = theme.colors.quarterlyContent
                 title = VectorL10n.liveLocationSharingEnded
                 titleColor = theme.colors.tertiaryContent
-                placeholderIcon = Asset.Images.locationLiveCellEndedIcon.image
             }
         case .outgoing(let liveLocationSharingStatus):
+            status = liveLocationSharingStatus
             switch liveLocationSharingStatus {
             case .starting:
-                iconTint = theme.colors.tertiaryContent
+                iconTint = theme.colors.quarterlyContent
                 title = VectorL10n.locationSharingLiveLoading
                 titleColor = theme.colors.tertiaryContent
-                placeholderIcon = Asset.Images.locationLiveCellLoadingIcon.image
             case .started(let coordinate, let timeLeft):
                 iconTint = theme.roomCellLocalisationIconStartedColor
                 title = VectorL10n.liveLocationSharingBannerTitle
@@ -269,14 +288,13 @@ class RoomTimelineLocationView: UIView, NibLoadable, Themable, MGLMapViewDelegat
                 rightButtonTitle = VectorL10n.retry
                 rightButtonTag = .retrySharing
             case .stopped:
-                iconTint = theme.colors.tertiaryContent
+                iconTint = theme.colors.quarterlyContent
                 title = VectorL10n.liveLocationSharingEnded
                 titleColor = theme.colors.tertiaryContent
-                placeholderIcon = Asset.Images.locationLiveCellEndedIcon.image
             }
         }
         
-        return LiveLocationBannerViewData(placeholderIcon: placeholderIcon,
+        return TimelineLiveLocationViewData(status: status,
                                           iconTint: iconTint,
                                           title: title,
                                           titleColor: titleColor,
@@ -329,6 +347,8 @@ class RoomTimelineLocationView: UIView, NibLoadable, Themable, MGLMapViewDelegat
         attributionLabel.textColor = theme.colors.accent
         layer.borderColor = theme.colors.quinaryContent.cgColor
         self.theme = theme
+        placeholderIcon = ThemeService.shared().isCurrentThemeDark() ? Asset.Images.locationLiveCellEndedDarkIcon.image : Asset.Images.locationLiveCellEndedLightIcon.image
+        placeholderBackgroundImage = ThemeService.shared().isCurrentThemeDark() ? Asset.Images.locationBackgroundDarkImage.image : Asset.Images.locationBackgroundLightImage.image
     }
     
     // MARK: - MGLMapViewDelegate

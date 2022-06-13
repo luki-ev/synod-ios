@@ -41,6 +41,9 @@ const CGFloat kTypingCellHeight = 24;
 // Observe key verification transaction changes
 @property (nonatomic, weak) id keyVerificationTransactionDidChangeNotificationObserver;
 
+// Listen to location beacon received
+@property (nonatomic, weak) id beaconInfoSummaryListener;
+
 // Timer used to debounce cells refresh
 @property (nonatomic, strong) NSTimer *refreshCellsTimer;
 
@@ -56,7 +59,7 @@ const CGFloat kTypingCellHeight = 24;
 
 @property (nonatomic) NSInteger typingCellIndex;
 
-@property(nonatomic, readwrite) BOOL isCurrentUserSharingIsLocation;
+@property(nonatomic, readwrite) BOOL isCurrentUserSharingActiveLocation;
 
 @end
 
@@ -100,6 +103,7 @@ const CGFloat kTypingCellHeight = 24;
         [self registerKeyVerificationRequestNotification];
         [self registerKeyVerificationTransactionNotification];
         [self registerTrustLevelDidChangeNotifications];
+        [self registerBeaconInfoSummaryListner];
         
         self.encryptionTrustLevel = RoomEncryptionTrustLevelUnknown;
     }
@@ -178,8 +182,13 @@ const CGFloat kTypingCellHeight = 24;
     {
         [[NSNotificationCenter defaultCenter] removeObserver:self.keyVerificationTransactionDidChangeNotificationObserver];
     }
-
+    
     [self.mxSession.threadingService removeDelegate:self];
+    
+    if (self.beaconInfoSummaryListener)
+    {
+        [self.mxSession.aggregations.beaconAggregations removeListener:self.beaconInfoSummaryListener];
+    }
     
     [super destroy];
 }
@@ -229,7 +238,7 @@ const CGFloat kTypingCellHeight = 24;
 
 - (void)roomSummaryDidChange:(NSNotification*)notification
 {
-    if (BuildSettings.liveLocationSharingEnabled)
+    if (RiotSettings.shared.enableLiveLocationSharing)
     {
         [self updateCurrentUserLocationSharingStatus];
     }
@@ -753,6 +762,44 @@ const CGFloat kTypingCellHeight = 24;
                                                                        }];
 }
 
+- (void)registerBeaconInfoSummaryListner
+{
+    MXWeakify(self);
+    self.beaconInfoSummaryListener = [self.mxSession.aggregations.beaconAggregations listenToBeaconInfoSummaryUpdateInRoomWithId:self.roomId handler:^(id<MXBeaconInfoSummaryProtocol> beaconInfoSummary) {
+        MXStrongifyAndReturnIfNil(self);
+        [self updateCurrentUserLocationSharingStatus];
+        [self refreshFirstCellWithBeaconInfoSummary:beaconInfoSummary];
+    }];
+}
+
+- (void)refreshFirstCellWithBeaconInfoSummary:(id<MXBeaconInfoSummaryProtocol>)beaconInfoSummary
+{
+    NSUInteger cellIndex;
+    __block RoomBubbleCellData *roomBubbleCellData;
+    
+    @synchronized (bubbles)
+    {
+        cellIndex = [bubbles indexOfObjectPassingTest:^BOOL(id<MXKRoomBubbleCellDataStoring>  _Nonnull cellData, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([cellData isKindOfClass:[RoomBubbleCellData class]])
+            {
+                roomBubbleCellData = (RoomBubbleCellData*)cellData;
+                if ([roomBubbleCellData.beaconInfoSummary.id isEqualToString:beaconInfoSummary.id])
+                {
+                    *stop = YES;
+                    return YES;
+                }
+            }
+            return NO;
+        }];
+    }
+    
+    if (cellIndex != NSNotFound)
+    {
+        roomBubbleCellData.beaconInfoSummary = beaconInfoSummary;
+        [self refreshCells];
+    }
+}
+
 - (BOOL)shouldFetchKeyVerificationForEvent:(MXEvent*)event
 {
     if (!event)
@@ -1152,16 +1199,18 @@ const CGFloat kTypingCellHeight = 24;
 {
     MXLocationService *locationService = self.mxSession.locationService;
     
-    if (!locationService || !self.roomId)
+    NSString *roomId = self.roomId;
+    
+    if (!locationService || !roomId)
     {
         return;
     }
     
-    BOOL isUserSharingIsLocation = [locationService isCurrentUserSharingIsLocationInRoomWithId:self.roomId];
+    BOOL isUserSharingActiveLocation = [locationService isCurrentUserSharingActiveLocationInRoomWithId:roomId];
     
-    if (isUserSharingIsLocation != self.isCurrentUserSharingIsLocation)
+    if (isUserSharingActiveLocation != self.isCurrentUserSharingActiveLocation)
     {
-        self.isCurrentUserSharingIsLocation = [locationService isCurrentUserSharingIsLocationInRoomWithId:self.roomId];
+        self.isCurrentUserSharingActiveLocation = isUserSharingActiveLocation;
         
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.roomDataSourceDelegate roomDataSourceDidUpdateCurrentUserSharingLocationStatus:self];
