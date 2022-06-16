@@ -145,6 +145,7 @@ $ bundle exec pod install
 ```
 $ convert *.png -fuzz 20% -fill '#32B4B6' -opaque '#0DBD8B' *.png
 $ sed -i.bak s,0DBD8B,32B4B6,g *.svg
+$ sed -i.bak 's/rgb(13,189,139)/rgb(50,180,182)/g' *.svg
 ```
 
 ## Generate IPA
