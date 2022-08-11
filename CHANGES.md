@@ -1,3 +1,99 @@
+## Changes in 1.8.26 (2022-08-10)
+
+🙌 Improvements
+
+- Upgrade MatrixSDK version ([v0.23.15](https://github.com/matrix-org/matrix-ios-sdk/releases/tag/v0.23.15)).
+
+🐛 Bugfixes
+
+- Media: Fix a potential crash when dismissing an image. ([#6548](https://github.com/vector-im/element-ios/issues/6548))
+
+Others
+
+- Contacts Prompt: Clarify how contacts are used in the app. ([#6549](https://github.com/vector-im/element-ios/issues/6549))
+
+
+## Changes in 1.8.25 (2022-08-09)
+
+🙌 Improvements
+
+- Upgrade MatrixSDK version ([v0.23.14](https://github.com/matrix-org/matrix-ios-sdk/releases/tag/v0.23.14)).
+- App Layout: Feature flag new App Layout ([#6406](https://github.com/vector-im/element-ios/issues/6406))
+- App Layout: Update All chats screen with latest design ([#6407](https://github.com/vector-im/element-ios/issues/6407))
+- App Layout: Change the App theme according to new design ([#6409](https://github.com/vector-im/element-ios/issues/6409))
+- App Layout: Implemented the new Space selector bottom sheet ([#6410](https://github.com/vector-im/element-ios/issues/6410))
+- Authentication: Update the ReCaptcha icon. ([#6427](https://github.com/vector-im/element-ios/issues/6427))
+- Location sharing: Improve live location sharing expanded map state when no more live location shares. ([#6488](https://github.com/vector-im/element-ios/issues/6488))
+- Location sharing: Render fallback UI when tile server unavailable. ([#6493](https://github.com/vector-im/element-ios/issues/6493))
+- In-app notifications will now also be delivered to Notification Centre. ([#6503](https://github.com/vector-im/element-ios/issues/6503))
+- Authentication: Don't show personalisation steps after registering with a generic SSO provider. ([#6530](https://github.com/vector-im/element-ios/issues/6530))
+
+🐛 Bugfixes
+
+- Room Directory: Show the "switch" button even if there are no public rooms in the homeserver's room directory. ([#4700](https://github.com/vector-im/element-ios/issues/4700))
+- Share Extension: Fix a bug where sending multiple images sometimes resulted in additional duplicates being sent. ([#5922](https://github.com/vector-im/element-ios/issues/5922))
+- Stop using an ephemeral web browser session for SSO authentication. ([#6462](https://github.com/vector-im/element-ios/issues/6462))
+- Media Attachments Viewer: Fixed an issue where dismissing GIFs would show the WebView playing the animation below the interaction transition animation. ([#6475](https://github.com/vector-im/element-ios/issues/6475))
+- Media: Fix a bug where the navigation bar shown when viewing an image wasn't taking the safe area into account. ([#6486](https://github.com/vector-im/element-ios/issues/6486))
+- Home: Use the correct status bar colour when using the dark theme with dark mode disabled. ([#6487](https://github.com/vector-im/element-ios/issues/6487))
+- Authentication: Always start a new authentication flow with the default homeserver (or the provisioning link if set). ([#6489](https://github.com/vector-im/element-ios/issues/6489))
+- Universal Links: Fix an infinite loop when handling a universal link for an unjoined room (or in some cases a crash). ([#6492](https://github.com/vector-im/element-ios/issues/6492))
+- App Layout: Conditionally hide favourite and people list tabs ([#6515](https://github.com/vector-im/element-ios/issues/6515))
+- Apply current theme to all the UI components ([#6526](https://github.com/vector-im/element-ios/issues/6526))
+- Some UI tweaks for New App Layout ([#6534](https://github.com/vector-im/element-ios/issues/6534))
+- Widgets: Fix a crash when loading the widget manager. ([#6539](https://github.com/vector-im/element-ios/issues/6539))
+
+⚠️ API Changes
+
+- Update the app's bundle name to show Element during SSO. ([#6462](https://github.com/vector-im/element-ios/issues/6462))
+
+📄 Documentation
+
+- Add docs/Customisation.md. ([#6473](https://github.com/vector-im/element-ios/issues/6473))
+
+🚧 In development 🚧
+
+- App Layout: Edit layout experiment ([#6079](https://github.com/vector-im/element-ios/issues/6079))
+
+
+## Changes in 1.8.24 (2022-07-26)
+
+✨ Features
+
+- Enable the new authentication and personalisation flows in the onboarding coordinator. ([#5151](https://github.com/vector-im/element-ios/issues/5151))
+- Read tile server URL from .well-known (PSG-592) ([#6472](https://github.com/vector-im/element-ios/issues/6472))
+
+🙌 Improvements
+
+- Upgrade MatrixSDK version ([v0.23.13](https://github.com/matrix-org/matrix-ios-sdk/releases/tag/v0.23.13)).
+- Replaces the usage of ffmpeg in the app again(Change was previously reverted). ([#6419](https://github.com/vector-im/element-ios/issues/6419))
+- Location sharing: Handle live location sharing start event reply in the timeline. ([#6423](https://github.com/vector-im/element-ios/issues/6423))
+- Location sharing: Show map credits on live location timeline tile only when map is shown. ([#6448](https://github.com/vector-im/element-ios/issues/6448))
+- Location sharing: Handle live location sharing delete in the timeline. ([#6470](https://github.com/vector-im/element-ios/issues/6470))
+- Location sharing: Display clearer error message when the user doesn't have permission to share location in the room. ([#6477](https://github.com/vector-im/element-ios/issues/6477))
+
+🐛 Bugfixes
+
+- Registration: Trim any whitespace away when verifying the user's email address. ([#2594](https://github.com/vector-im/element-ios/issues/2594))
+- AuthenticationViewController is now correctly configured for a deep link if the link is opened before the view gets shown. ([#6425](https://github.com/vector-im/element-ios/issues/6425))
+
+🧱 Build
+
+- Fix UI tests failing on CI but not being reported by prefixing all tests with `test`. ([#6432](https://github.com/vector-im/element-ios/issues/6432))
+
+🚧 In development 🚧
+
+- Update strings for FTUE authentication flow following final review. ([#6427](https://github.com/vector-im/element-ios/issues/6427))
+- Check for a phone number during login and send an MSISDN when using the new flow. ([#6428](https://github.com/vector-im/element-ios/issues/6428))
+- Fix ReCaptcha form sometimes being slow to react to taps in the new flow. ([#6429](https://github.com/vector-im/element-ios/issues/6429))
+- When entering a full MXID during registration on the new flow, update the homeserver to match. ([#6430](https://github.com/vector-im/element-ios/issues/6430))
+- Always perform the dummy stage in the registration wizard, irregardless of whether it is mandatory or optional. ([#6459](https://github.com/vector-im/element-ios/issues/6459))
+
+Others
+
+- Crypto: Convert verification request and transaction to protocols ([#6444](https://github.com/vector-im/element-ios/pull/6444))
+
+
 ## Changes in 1.8.23 (2022-07-15)
 
 🙌 Improvements

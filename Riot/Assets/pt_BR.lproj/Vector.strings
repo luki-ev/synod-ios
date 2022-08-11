@@ -358,7 +358,7 @@
 "settings_crypto_device_key" = "\nChave de sessão:\n";
 "settings_crypto_export" = "Chaves de exportação";
 "settings_crypto_blacklist_unverified_devices" = "Encriptar para sessões verificadas somente";
-"settings_deactivate_my_account" = "Desativar minha conta";
+"settings_deactivate_my_account" = "Desativar conta permanentemente";
 "room_details_people" = "Membros";
 "room_details_files" = "Uploads";
 "room_details_settings" = "Ajustes";
@@ -1627,13 +1627,13 @@
 "search_filter_placeholder" = "Filtrar";
 "onboarding_use_case_existing_server_button" = "Conectar a servidor";
 "onboarding_use_case_existing_server_message" = "Procurando se juntar a um servidor existente?";
-"onboarding_use_case_skip_button" = "pukar esta pergunta";
+"onboarding_use_case_skip_button" = "Pular esta pergunta";
 /* The placeholder string contains onboarding_use_case_skip_button as a tappable action */
-"onboarding_use_case_not_sure_yet" = "Não tem certeza ainda? Você pode %@";
+"onboarding_use_case_not_sure_yet" = "Não tem certeza ainda? %@";
 "onboarding_use_case_community_messaging" = "Comunidades";
 "onboarding_use_case_work_messaging" = "Times";
 "onboarding_use_case_personal_messaging" = "Amigas(os) e família";
-"onboarding_use_case_message" = "Nós vamos ajudá-la(o) a se conectar.";
+"onboarding_use_case_message" = "Nós vamos ajudá-la(o) a ficar conectada(o)";
 "onboarding_use_case_title" = "Com quem você vai fazer chat mais?";
 
 
@@ -1754,7 +1754,7 @@
 "room_displayname_more_than_two_members" = "%@ e %@ outros";
 // Settings
 "settings" = "Ajustes";
-"settings_enable_inapp_notifications" = "Habilitar notificações Em-App";
+"settings_enable_inapp_notifications" = "Habilitar notificações em-app";
 "settings_enable_push_notifications" = "Habilitar notificações push";
 "settings_enter_validation_token_for" = "Entrar token de validação para %@:";
 "notification_settings_room_rule_title" = "Sala: '%@'";
@@ -2239,10 +2239,10 @@
 "threads_notice_title" = "Threads não mais experimentais 🎉";
 "room_participants_invite_prompt_to_msg" = "Você tem certeza que você quer convidar %@ para %@?";
 "onboarding_celebration_button" = "Vamo lá";
-"onboarding_celebration_message" = "Suas preferências têm sido salvas.";
-"onboarding_celebration_title" = "Você está pronta(o)!";
+"onboarding_celebration_message" = "Passe em preferências a qualquer momento para atualizar seu perfil";
+"onboarding_celebration_title" = "Tá com uma cara ótima!";
 "onboarding_avatar_accessibility_label" = "Imagem de perfil";
-"onboarding_avatar_message" = "Você pode mudar isto a qualquer hora.";
+"onboarding_avatar_message" = "Hora de colocar um rosto ao nome";
 "onboarding_avatar_title" = "Adicione uma imagem de perfil";
 "onboarding_display_name_max_length" = "Seu nome de exibição deve ser menos que 256 caracteres";
 "onboarding_display_name_hint" = "Você pode mudar isto mais tarde";
@@ -2254,7 +2254,7 @@
 "onboarding_congratulations_home_button" = "Me leve para casa";
 "onboarding_congratulations_personalize_button" = "Personalizar perfil";
 /* The placeholder string contains the user's matrix ID */
-"onboarding_congratulations_message" = "Sua conta %@ tem sido criada.";
+"onboarding_congratulations_message" = "Sua conta %@ tem sido criada";
 "onboarding_congratulations_title" = "Parabéns!";
 "saving" = "Salvando";
 
@@ -2267,7 +2267,7 @@
 "existing" = "Existente";
 "stop" = "Parar";
 "joining" = "Juntando-Se";
-"location_sharing_live_list_item_stop_sharing_action" = "Parar de compartilhar";
+"location_sharing_live_list_item_stop_sharing_action" = "Parar";
 "location_sharing_live_list_item_current_user_display_name" = "Você";
 "location_sharing_live_list_item_last_update_invalid" = "Última atualização desconhecida";
 "location_sharing_live_list_item_last_update" = "Atualizado %@ atrás";
@@ -2319,3 +2319,84 @@
 "settings_timeline" = "TIMELINE";
 "room_accessibility_record_voice_message_hint" = "Toque duplo e segure para gravar.";
 "room_accessibility_record_voice_message" = "Gravar Mensagem de Voz";
+"authentication_login_username" = "Nome de Usuária(o) / Email / Telefone";
+"message_reply_to_sender_sent_their_live_location" = "Localização ao vivo.";
+"location_sharing_live_lab_promotion_activation" = "Habilitar compartilhamento de localização ao vivo";
+"location_sharing_live_lab_promotion_text" = "Por favor note: esta é uma funcionalidade de labs usando uma implementação temporária que permite o histórico de sua localização compartilhada ser permanentemente visível a outras pessoas na sala.";
+"location_sharing_live_lab_promotion_title" = "Compartilhamento de localização ao vivo";
+"location_sharing_map_credits_title" = "© Copyright";
+"room_info_back_button_title" = "Info de Sala";
+"network_offline_message" = "Você está offline, cheque sua conexão.";
+"network_offline_title" = "Você está offline";
+"password_validation_error_contain_symbol" = "Conter um símbolo.";
+"password_validation_error_contain_number" = "Conter um número.";
+"password_validation_error_contain_uppercase_letter" = "Conter uma letra maiúscula.";
+"password_validation_error_contain_lowercase_letter" = "Conter uma letra minúscula.";
+/* The placeholder will show a number */
+"password_validation_error_max_length" = "Não exceder %d caracteres.";
+/* The placeholder will show a number */
+"password_validation_error_min_length" = "Pelo menos %d caracteres.";
+"password_validation_error_header" = "Dada senha não cumpre os critérios abaixo:";
+
+// MARK: Password Validation
+"password_validation_info_header" = "Sua senha devia cumprir os critérios abaixo:";
+"authentication_recaptcha_title" = "Você é um/uma humano(a)?";
+"authentication_terms_policy_url_error" = "Incapaz de encontrar a política selecionada. Por favor tente de novo mais tarde.";
+/* The placeholder will show the homeserver's domain */
+"authentication_terms_message" = "Por favor leia os termos e políticas de %@";
+"authentication_terms_title" = "Políticas de servidor";
+"authentication_verify_msisdn_invalid_phone_number" = "Número de telefone inválido";
+"authentication_verify_msisdn_waiting_button" = "Reenviar código";
+/* The placeholder will show the phone number that was entered. */
+"authentication_verify_msisdn_waiting_message" = "Um código foi enviado para %@";
+"authentication_verify_msisdn_waiting_title" = "Verificar seu número de telefone";
+"authentication_verify_msisdn_otp_text_field_placeholder" = "Código de Confirmação";
+"authentication_verify_msisdn_text_field_placeholder" = "Número de Telefone";
+/* The placeholder will show the homeserver's domain */
+"authentication_verify_msisdn_input_message" = "%@ precisa verificar sua conta";
+"authentication_verify_msisdn_input_title" = "Entrar seu número de telefone";
+"authentication_choose_password_submit_button" = "Resettar Senha";
+"authentication_choose_password_signout_all_devices" = "Fazer signout de todos os dispositivos";
+"authentication_choose_password_text_field_placeholder" = "Senha Nova";
+"authentication_choose_password_input_message" = "Garanta que seja 8 caracteres ou mais";
+"authentication_choose_password_input_title" = "Escolher uma senha nova";
+"authentication_forgot_password_waiting_button" = "Reenviar email";
+/* The placeholder will show the email address that was entered. */
+"authentication_forgot_password_waiting_message" = "Siga as instruções enviadas para %@";
+"authentication_forgot_password_waiting_title" = "Checar seu email.";
+"authentication_forgot_password_text_field_placeholder" = "Email";
+/* The placeholder will show the homeserver's domain */
+"authentication_forgot_password_input_message" = "%@ vai enviar para você um link de verificação";
+"authentication_forgot_password_input_title" = "Entrar seu email";
+"authentication_verify_email_waiting_button" = "Reenviar email";
+"authentication_verify_email_waiting_hint" = "Não recebeu um email?";
+/* The placeholder will show the email address that was entered. */
+"authentication_verify_email_waiting_message" = "Siga as instruções enviadas para %@";
+"authentication_verify_email_waiting_title" = "Verificar seu email.";
+"authentication_verify_email_text_field_placeholder" = "Email";
+/* The placeholder will show the homeserver's domain */
+"authentication_verify_email_input_message" = "%@ precisa verificar sua conta";
+"authentication_verify_email_input_title" = "Entrar seu email";
+"authentication_cancel_flow_confirmation_message" = "Sua conta não está criada ainda. Parar o processo de registração?";
+"authentication_server_selection_generic_error" = "Não dá para encontrar um servidor neste URL, por favor cheque que ele está correto.";
+"authentication_server_selection_server_url" = "URL de servidorcasa";
+"authentication_server_selection_register_message" = "Qual é o endereço de seu servidor? Isto é como uma casa para todos os seus dados";
+"authentication_server_selection_register_title" = "Selecionar seu servidorcasa";
+"authentication_server_selection_login_message" = "Qual é o endereço de seu servidor?";
+"authentication_server_selection_login_title" = "Conectar a servidorcasa";
+"authentication_server_info_title_login" = "Onde suas conversas vivem";
+"authentication_login_forgot_password" = "Esqueceu senha";
+"authentication_login_title" = "Boas vindas de volta!";
+"authentication_server_info_title" = "Onde suas conversas vão viver";
+"authentication_registration_password_footer" = "Deve ser 8 caracteres ou mais";
+/* The placeholder will show the full Matrix ID that has been entered. */
+"authentication_registration_username_footer_available" = "Outras(os) podem descobrir você %@";
+"authentication_registration_username_footer" = "Você não pode mudar isto mais tarde";
+"authentication_registration_username" = "Nome de usuária(o)";
+
+// MARK: Authentication
+"authentication_registration_title" = "Criar sua conta";
+"location_sharing_invalid_power_level_message" = "Você precisa ter as permissões certas a fim de compartilhar localização ao vivo nesta sala.";
+"location_sharing_invalid_power_level_title" = "Você não tem permissão para compartilhar localização ao vivo";
+"authentication_choose_password_not_verified_message" = "Cheque sua inbox";
+"authentication_choose_password_not_verified_title" = "Email não verificado";

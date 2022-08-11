@@ -349,7 +349,7 @@
 "settings_crypto_device_key" = "\nMunkamenet kulcsa:\n";
 "settings_crypto_export" = "Kulcsok kimentése";
 "settings_crypto_blacklist_unverified_devices" = "Csak ellenőrzött munkameneteknek titkosít";
-"settings_deactivate_my_account" = "Felhasználói fiókom felfüggesztése";
+"settings_deactivate_my_account" = "Felhasználói fiókom végleges felfüggesztése";
 "room_details_people" = "Tagok";
 "room_details_files" = "Feltöltések";
 "room_details_settings" = "Beállítások";
@@ -1595,15 +1595,15 @@
 
 "location_sharing_title" = "Földrajzi helyzet";
 "ok" = "OK";
-"onboarding_splash_page_4_message" = "Element megállja a helyét a munkahelyen is. A világ legbiztonságosabb szervezetei bíznak meg benne.";
-"onboarding_splash_page_3_message" = "Telefonszám nélkül végpontok között titkosított. Reklámok és adatbányászat nélkül.";
-"onboarding_splash_page_2_message" = "Válaszd meg hol legyenek a beszélgetéseid tárolva, visszaadja az irányítást és függetlenné tesz. Csatlakozva a Matrixhoz.";
-"onboarding_splash_page_1_message" = "Biztonságos és független kommunikáció ami olyan biztonságos mintha valakivel négyszemközt beszélgetnél a házadban.";
+"onboarding_splash_page_4_message" = "Az Element megállja a helyét a munkahelyi kommunikációban is. A világ legbiztonságosabb szervezetei bíznak meg benne.";
+"onboarding_splash_page_3_message" = "Végponti titkosítással védett, és nem kell telefonszám a regiszrációhoz. Reklámok és adatbányászat nélkül.";
+"onboarding_splash_page_2_message" = "Kiválaszthatod, hogy hol legyenek a beszélgetéseid tárolva, így visszaadva neked az irányítást és a függetlenséget. Csatlakozz a Matrixhoz.";
+"onboarding_splash_page_1_message" = "Biztonságos és független kommunikáció, ami olyan biztonságos mintha valakivel négyszemközt beszélgetnél a házadban.";
 "settings_enable_room_message_bubbles" = "Üzenet buborékok";
 "onboarding_splash_page_4_title_no_pun" = "Üzenetküldés a csoportodnak.";
 "onboarding_splash_page_3_title" = "Biztonságos üzenetküldés.";
-"onboarding_splash_page_2_title" = "Te irányítasz.";
-"onboarding_splash_page_1_title" = "Az ön beszélgetései csak az öné.";
+"onboarding_splash_page_2_title" = "Tiéd az irányítás.";
+"onboarding_splash_page_1_title" = "Vedd birtokba a beszélgetéseid!";
 "onboarding_splash_login_button_title" = "Már van fiókom";
 
 // Onboarding
@@ -1651,14 +1651,14 @@
 "search_filter_placeholder" = "Szűrés";
 "onboarding_use_case_existing_server_button" = "Szerverhez csatlakozás";
 "onboarding_use_case_existing_server_message" = "Csatlakoznál egy már meglévő szerverhez?";
-"onboarding_use_case_skip_button" = "kérdés kihagyása";
+"onboarding_use_case_skip_button" = "Kihagyhatod ezt a kérdést.";
 /* The placeholder string contains onboarding_use_case_skip_button as a tappable action */
-"onboarding_use_case_not_sure_yet" = "Még nem vagy biztos? Tudhatsz ilyent: %@";
+"onboarding_use_case_not_sure_yet" = "Még nem tudod? %@";
 "onboarding_use_case_community_messaging" = "Közösségek";
-"onboarding_use_case_work_messaging" = "Csoportok";
+"onboarding_use_case_work_messaging" = "Munkahelyi csoportok";
 "onboarding_use_case_personal_messaging" = "Barátok és család";
-"onboarding_use_case_message" = "Segítünk a kapcsolatteremétésben.";
-"onboarding_use_case_title" = "Kivel beszélgetnék leginkább?";
+"onboarding_use_case_message" = "Segítünk a kapcsolatteremétésben";
+"onboarding_use_case_title" = "Kikkel fogsz legtöbbet beszélgetni?";
 
 
 // MARK: - MatrixKit
@@ -2169,22 +2169,22 @@
 "threads_notice_title" = "Az üzenetszálak többé már nem kísérleti funkció! 🎉";
 "room_participants_invite_prompt_to_msg" = "Biztos, hogy meg akarod hívni őt: %@ ide: %@?";
 "onboarding_celebration_button" = "Gyerünk";
-"onboarding_celebration_message" = "A beállítások elmentve.";
-"onboarding_celebration_title" = "Minden kész!";
+"onboarding_celebration_message" = "A beállításokban bármikor megváltoztathatod ezeket";
+"onboarding_celebration_title" = "Jól néz ki!";
 "onboarding_avatar_accessibility_label" = "Profilkép";
-"onboarding_avatar_message" = "Bármikor megváltoztatható.";
+"onboarding_avatar_message" = "Ideje képet adni a profilhoz";
 "onboarding_avatar_title" = "Profilkép hozzáadása";
-"onboarding_display_name_max_length" = "A megjelenítendő név 256 karakternél rövidebb legyen";
+"onboarding_display_name_max_length" = "A megjelenítendő név 256 karakternél rövidebb kell legyen";
 "onboarding_display_name_hint" = "Ezt később meg lehet változtatni";
 "onboarding_display_name_placeholder" = "Megjelenítendő név";
 "onboarding_display_name_message" = "Ez fog megjelenni amikor üzenetet küldesz.";
-"onboarding_display_name_title" = "Válassz egy megjelenítési nevet";
+"onboarding_display_name_title" = "Válassz egy megjelenített nevet";
 "onboarding_personalization_skip" = "Lépés kihagyása";
-"onboarding_personalization_save" = "Mentés és tovább";
-"onboarding_congratulations_home_button" = "Vigyél haza";
+"onboarding_personalization_save" = "Mentés és folytatás";
+"onboarding_congratulations_home_button" = "A kezdőlapra";
 "onboarding_congratulations_personalize_button" = "Profil személyre szabása";
 /* The placeholder string contains the user's matrix ID */
-"onboarding_congratulations_message" = "A fiókod elkészült: %@.";
+"onboarding_congratulations_message" = "A fiókod elkészült. A Matrix címed: %@";
 "onboarding_congratulations_title" = "Gratulálunk!";
 "saving" = "Mentés";
 
@@ -2290,7 +2290,7 @@
 "create_room_suggest_room_footer" = "A javasolt szobák a tér tagság számára csatlakozásra érdemesként lesznek feltüntetve.";
 "room_access_space_chooser_other_spaces_section_info" = "Ezek valószínűleg olyanok, amelyeknek más %@ adminok is tagjai.";
 "room_displayname_more_than_two_members" = "%@ és %@ mások";
-"location_sharing_live_list_item_stop_sharing_action" = "Megosztás megállítása";
+"location_sharing_live_list_item_stop_sharing_action" = "Megállítás";
 "location_sharing_live_list_item_current_user_display_name" = "Te";
 "location_sharing_live_list_item_last_update_invalid" = "Frissítés ideje ismeretlen";
 "location_sharing_live_list_item_last_update" = "Frissítve ekkor: %@";
@@ -2324,3 +2324,94 @@
 "location_sharing_allow_background_location_title" = "Hozzáférés engedélyezése";
 "settings_labs_enable_live_location_sharing" = "Folyamatos helymeghatározás megosztása - a jelenlegi helyzet megosztása (aktív fejlesztés alatt, átmenetileg a megosztott helyek megmaradnak a szoba idővonalán)";
 "settings_ui_show_redactions_in_room_history" = "Helykitöltő megjelenítése a törölt szövegek helyett";
+"message_reply_to_sender_sent_their_live_location" = "Élő földrajzi helyzet.";
+"location_sharing_live_lab_promotion_activation" = "Élő helymegosztás engedélyezése";
+"location_sharing_live_lab_promotion_text" = "Megjegyzés: ez egy kísérleti lehetőség, egy átmeneti megvalósítás ami permanensen elérhetővé teszi a megosztott földrajzi helyzetedet a szobában a többiek számára.";
+"location_sharing_live_lab_promotion_title" = "Élő földrajzi hely megosztása";
+"location_sharing_map_credits_title" = "© Szerzői jog";
+
+// MARK: Reactions
+
+"room_event_action_reaction_more" = "még %@";
+"leave_space_selection_no_rooms" = "0 szoba kiválasztása";
+"leave_space_selection_all_rooms" = "Minden szoba kiválasztása";
+"leave_space_selection_title" = "SZOBÁK KIVÁLASZTÁSA";
+"leave_space_and_more_rooms" = "Tér és %@ szoba elhagyása";
+"leave_space_and_one_room" = "Tér és egy szoba elhagyása";
+
+// Mark: Leave space
+
+"leave_space_action" = "Tér elhagyása";
+"spaces_feature_not_available" = "Ez a tulajdonság itt nem érhető el. Egyenlőre ez itt érhető el számítógépen: %@.";
+"home_context_menu_mark_as_read" = "Olvasottnak jelöl";
+"room_info_back_button_title" = "Szoba információ";
+"network_offline_message" = "Nincs kapcsolat, ellenőrizd a hálózatot.";
+"network_offline_title" = "Kapcsolat nélküli munka";
+"settings_timeline" = "IDŐVONAL";
+"room_accessibility_record_voice_message_hint" = "Két koppintás és tartás a felvételhez.";
+"room_accessibility_record_voice_message" = "Hang üzenet felvétele";
+"password_validation_error_contain_symbol" = "Írásjelet tartalmaz.";
+"password_validation_error_contain_number" = "Számot tartalmaz.";
+"password_validation_error_contain_uppercase_letter" = "Nagybetűt tartalmaz.";
+"password_validation_error_contain_lowercase_letter" = "Kisbetűt tartalmaz.";
+/* The placeholder will show a number */
+"password_validation_error_max_length" = "Nem lehet több mint %d karakter.";
+/* The placeholder will show a number */
+"password_validation_error_min_length" = "Legalább %d karakternek kell lennie.";
+"password_validation_error_header" = "A megadott jelszó nem tesz eleget az alábbiaknak:";
+
+// MARK: Password Validation
+"password_validation_info_header" = "A jelszónak meg kell felelnie az alábbiaknak:";
+"authentication_recaptcha_title" = "Ember vagy?";
+"authentication_terms_policy_url_error" = "A kiválasztott szabály nem található. Kérjük próbálja később.";
+"authentication_terms_message" = "Olvasd el %@ felhasználói feltételeit";
+"authentication_terms_title" = "Szerver szabályok";
+"authentication_verify_msisdn_invalid_phone_number" = "Érvénytelen telefonszám";
+"authentication_verify_msisdn_waiting_button" = "Kód újraküldése";
+/* The placeholder will show the phone number that was entered. */
+"authentication_verify_msisdn_waiting_message" = "A kód ide lett leküldve: %@";
+"authentication_verify_msisdn_waiting_title" = "Telefonszám ellenőrzése";
+"authentication_verify_msisdn_otp_text_field_placeholder" = "Ellenőrző Kód";
+"authentication_verify_msisdn_text_field_placeholder" = "Telefonszám";
+"authentication_verify_msisdn_input_message" = "%@ ellenőrizni kell a fiókodat";
+"authentication_verify_msisdn_input_title" = "Telefonszám megadása";
+"authentication_choose_password_submit_button" = "Jelszó visszaállítása";
+"authentication_choose_password_signout_all_devices" = "Kijelentkezés minden eszközből";
+"authentication_choose_password_text_field_placeholder" = "Új jelszó";
+"authentication_choose_password_input_message" = "8 vagy több karakterből kell álljon";
+"authentication_choose_password_input_title" = "Válassz jelszót";
+"authentication_forgot_password_waiting_button" = "E-mail újraküldése";
+/* The placeholder will show the email address that was entered. */
+"authentication_forgot_password_waiting_message" = "Kövesd az utasításokat amit ide küldtünk: %@";
+"authentication_forgot_password_waiting_title" = "Ellenőrizd az e-mailed.";
+"authentication_forgot_password_text_field_placeholder" = "E-mail";
+"authentication_forgot_password_input_message" = "%@ ellenőrző hivatkozást fog küldeni";
+"authentication_forgot_password_input_title" = "Add meg az e-mail címed";
+"authentication_verify_email_waiting_button" = "E-mail újraküldése";
+"authentication_verify_email_waiting_hint" = "Megkaptad az e-mailt?";
+/* The placeholder will show the email address that was entered. */
+"authentication_verify_email_waiting_message" = "Kövesd az utasításokat amit ide küldtünk: %@";
+"authentication_verify_email_waiting_title" = "Ellenőrizd az e-mailedet.";
+"authentication_verify_email_text_field_placeholder" = "E-mail";
+"authentication_verify_email_input_message" = "%@ ellenőrizni kell a fiókodat";
+"authentication_verify_email_input_title" = "Add meg az e-mail címed";
+"authentication_cancel_flow_confirmation_message" = "A felhasználói fiókod még nincs kész. Félbehagyod a regisztrációt?";
+"authentication_server_selection_generic_error" = "Ezen a címen nem található szerver, kérlek ellenőrizd, hogy helyesen adtad-e meg.";
+"authentication_server_selection_server_url" = "Matrix szerver URL";
+"authentication_server_selection_register_message" = "Mi a szervered címe? Olyan mint az adataid otthona";
+"authentication_server_selection_register_title" = "Válaszd ki a matrix szerveredet";
+"authentication_server_selection_login_message" = "Mi a szervered címe?";
+"authentication_server_selection_login_title" = "Matrix szerverhez csatlakozás";
+"authentication_server_info_title" = "Itt lesznek tárolva a beszélgetéseid";
+"authentication_login_forgot_password" = "Elfelejtetted a jelszót?";
+"authentication_login_username" = "Felhasználónév / E-mail / Telefonszám";
+"authentication_login_title" = "Üdv újra!";
+"authentication_registration_password_footer" = "8 vagy több karakternek kell lennie";
+/* The placeholder will show the full Matrix ID that has been entered. */
+"authentication_registration_username_footer_available" = "%@ mások megtalálhatnak";
+"authentication_registration_username_footer" = "Ezt később nem lehet megváltoztatni";
+"authentication_registration_username" = "Felhasználónév";
+
+// MARK: Authentication
+"authentication_registration_title" = "Fiók létrehozása";
+"authentication_server_info_title_login" = "Ahol a beszélgetéseid lesznek";
