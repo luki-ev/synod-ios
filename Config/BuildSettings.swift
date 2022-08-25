@@ -251,7 +251,6 @@ final class BuildSettings: NSObject {
     static let homeScreenShowFavouritesTab: Bool = true
     static let homeScreenShowPeopleTab: Bool = true
     static let homeScreenShowRoomsTab: Bool = true
-    static let homeScreenShowCommunitiesTab: Bool = true
 
     // MARK: - General Settings Screen
     
@@ -334,7 +333,6 @@ final class BuildSettings: NSObject {
     static let roomSettingsScreenAllowChangingAccessSettings: Bool = true
     static let roomSettingsScreenAllowChangingHistorySettings: Bool = true
     static let roomSettingsScreenShowAddressSettings: Bool = true
-    static let roomSettingsScreenShowFlairSettings: Bool = true
     static let roomSettingsScreenShowAdvancedSettings: Bool = true
     static let roomSettingsScreenAdvancedShowEncryptToVerifiedOption: Bool = true
 
@@ -407,5 +405,9 @@ final class BuildSettings: NSObject {
     static let syncLocalContacts: Bool = false
     
     // MARK: - New App Layout
-    static let newAppLayoutEnabled = false
+    static let newAppLayoutEnabled = true
+    
+    // MARK: - Device manager
+    
+    static let deviceManagerEnabled = false
 }
