@@ -38,15 +38,15 @@ platform :ios do
 
   desc "Builds an ipa for the App Store"
   lane :app_store do |options|
-    UI.user_error!("'SENTRY_AUTH_TOKEN' environment variable should be set to use this lane, see Passbolt") unless !ENV["SENTRY_AUTH_TOKEN"].to_s.empty?
-    sentry_check_cli_installed
+    #UI.user_error!("'SENTRY_AUTH_TOKEN' environment variable should be set to use this lane, see Passbolt") unless !ENV["SENTRY_AUTH_TOKEN"].to_s.empty?
+    #sentry_check_cli_installed
 
     if !options.has_key?(:build_number)
       build_number = generate_build_number()
       options = { build_number: build_number }.merge(options)
     end
     build_release(options)
-    upload_dsyms_to_sentry
+    #upload_dsyms_to_sentry
   end
 
   desc "Builds an Alpha ipa for pull request branches"
