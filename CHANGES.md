@@ -1,3 +1,53 @@
+## Changes in 1.9.5 (2022-09-12)
+
+🐛 Bugfixes
+
+- Fix timeline items text height calculation ([#6702](https://github.com/vector-im/element-ios/pull/6702))
+
+🚧 In development 🚧
+
+- Device manager: Add other sessions section read only in user sessions overview screen. ([#6672](https://github.com/vector-im/element-ios/issues/6672))
+
+
+## Changes in 1.9.4 (2022-09-09)
+
+✨ Features
+
+- Create DM room only on first message - Create the DM and navigate to the new room after sending an event ([#5864](https://github.com/vector-im/element-ios/issues/5864))
+
+🐛 Bugfixes
+
+- Fix composer expansion on Start DM as you enter the message in deferred mode. ([#6689](https://github.com/vector-im/element-ios/issues/6689))
+- [Group DM] send a new message in an existing DM invite again one of left member. ([#6691](https://github.com/vector-im/element-ios/issues/6691))
+
+
+## Changes in 1.9.3 (2022-09-07)
+
+✨ Features
+
+- CryptoV2: Self-verification flow ([#6589](https://github.com/vector-im/element-ios/issues/6589))
+
+🙌 Improvements
+
+- Analytics: Measure performance in Sentry ([#6647](https://github.com/vector-im/element-ios/pull/6647))
+- Crypto: Slash command to discard outbound session ([#6668](https://github.com/vector-im/element-ios/pull/6668))
+- Upgrade MatrixSDK version ([v0.23.18](https://github.com/matrix-org/matrix-ios-sdk/releases/tag/v0.23.18)).
+- Removed labs flag and enabled New App Layout ([#6673](https://github.com/vector-im/element-ios/issues/6673))
+- Update empty states as per latest design update ([#6674](https://github.com/vector-im/element-ios/issues/6674))
+- Reset allChatsOnboardingHasBeenDisplayed on logout ([#6676](https://github.com/vector-im/element-ios/issues/6676))
+
+🐛 Bugfixes
+
+- Fixed incorrect iOS 16 timeline item text height calculations leading to empty gaps. ([#6441](https://github.com/vector-im/element-ios/issues/6441))
+- Fix mention pills display on iOS 16 ([#6442](https://github.com/vector-im/element-ios/issues/6442))
+- Fixed last message time ellipsis ([#6512](https://github.com/vector-im/element-ios/issues/6512))
+- Glitchy room list header when scrolling ([#6513](https://github.com/vector-im/element-ios/issues/6513))
+- Performance issues with new App Layout ([#6537](https://github.com/vector-im/element-ios/issues/6537))
+- Fixed UI glitches in dark mode ([#6645](https://github.com/vector-im/element-ios/issues/6645))
+- Fix mention pills display when coming back to a room with an unsent message ([#6670](https://github.com/vector-im/element-ios/issues/6670))
+- Fixed last scrolling glitches in All Chats screen ([#6680](https://github.com/vector-im/element-ios/issues/6680))
+
+
 ## Changes in 1.9.2 (2022-08-31)
 
 🙌 Improvements

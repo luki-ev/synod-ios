@@ -494,6 +494,7 @@ Tap the + to start adding people.";
 "encrypted_room_message_placeholder" = "Send an encrypted message…";
 "encrypted_room_message_reply_to_placeholder" = "Send an encrypted reply…";
 "room_message_short_placeholder" = "Send a message…";
+"room_first_message_placeholder" = "Send your first message…";
 "room_message_reply_to_short_placeholder" = "Send a reply…";
 "room_offline_notification" = "Connectivity to the server has been lost.";
 "room_unsent_messages_notification" = "Messages failed to send.";
@@ -2359,6 +2360,24 @@ To enable access, tap Settings> Location and select Always";
 // MARK: User sessions management
 
 "user_sessions_overview_title" = "Sessions";
+
+"user_sessions_overview_other_sessions_section_title" = "OTHER SESSIONS";
+"user_sessions_overview_other_sessions_section_info" = "For best security, verify your sessions and sign out from any session that you don’t recognize or use anymore.";
+
+"user_session_verified" = "Verified session";
+"user_session_unverified" = "Unverified session";
+"user_session_verified_short" = "Verified";
+"user_session_unverified_short" = "Unverified";
+
+// First item is client name and second item is session display name
+"user_session_name" = "%@: %@";
+
+"user_session_item_details" = "%@ · Last activity %@";
+
+"device_name_desktop" = "%@ Desktop";
+"device_name_web" = "%@ Web";
+"device_name_mobile" = "%@ Mobile";
+"device_name_unknown" = "Unknown client";
 
 // MARK: - MatrixKit
 

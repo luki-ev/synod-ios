@@ -16,11 +16,22 @@
 
 import Foundation
 
-class AllChatsViewControllerWithBannerWrapperViewController: HomeViewControllerWithBannerWrapperViewController {
+/// Enables to build user session name
+class UserSessionNameFormatter {
     
-    // MARK: - MasterTabBarItemDisplayProtocol
-    
-    override var masterTabBarItemTitle: String {
-        return VectorL10n.allChatsTitle
+    /// Session name with client name and session display name
+    func sessionName(deviceType: DeviceType, sessionDisplayName: String?) -> String {
+        
+        let sessionName: String
+        
+        let clientName = deviceType.name
+        
+        if let sessionDisplayName = sessionDisplayName {
+            sessionName = VectorL10n.userSessionName(clientName, sessionDisplayName)
+        } else {
+            sessionName = clientName
+        }
+        
+        return sessionName
     }
 }
