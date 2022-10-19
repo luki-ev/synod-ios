@@ -2477,13 +2477,13 @@
 "room_access_settings_screen_public_message" = "Sichtbar und zugänglich für jeden.";
 "room_access_settings_screen_restricted_message" = "Sichtbar und betretbar für jeden Nutzer in einem Space.\nDu wählst, für welche Spaces dies gilt.";
 "room_access_settings_screen_private_message" = "Nur sichtbar und betretbar für eingeladene Personen.";
-"location_sharing_allow_background_location_message" = "Wenn du deinen Echtzeit-Standort freigeben möchtest, benötigt Element den Standortzugriff auch im Hintergrund. Um den Zugriff zu gewähren, tippe auf Einstellungen > Standort und wähle „Immer“";
+"location_sharing_allow_background_location_message" = "Wenn du deinen Echtzeit-Standort freigeben möchtest, benötigt Synod den Standortzugriff auch im Hintergrund. Um den Zugriff zu gewähren, tippe auf Einstellungen > Standort und wähle „Immer“";
 "space_selector_empty_view_information" = "Spaces sind eine neue Möglichkeit, Räume und Personen zu gruppieren. Erstelle einen Space, um zu beginnen.";
 "all_chats_onboarding_title" = "Was ist neu";
 "all_chats_onboarding_page_message3" = "Drücke auf dein Profil um uns Wissen zu lassen, was du denkst.";
 "all_chats_onboarding_page_message2" = "Greife auf deine Spaces (unten links) schneller und einfacher denn je zu.";
 "all_chats_onboarding_page_title2" = "Auf Spaces zugreifen";
-"all_chats_onboarding_page_message1" = "Um dein Element zu vereinfachen, sind Tabs nun optional. Verwalte sie mit dem Menü oben rechts.";
+"all_chats_onboarding_page_message1" = "Um dein Synod zu vereinfachen, sind Tabs nun optional. Verwalte sie mit dem Menü oben rechts.";
 "all_chats_empty_view_information" = "Die Komplettlösung für sichere Kommunikation unter Freunden, in Gruppen oder in Organisationen. Erstelle eine Unterhaltung oder trete einem bestehenden Raum bei, um loszulegen.";
 "all_chats_empty_space_information" = "Spaces sind eine neue Möglichkeit, Räume und Personen zu gruppieren. Füge einen bestehenden Raum hinzu oder erstelle einen neuen mit der Schaltfläche unten rechts.";
 "all_chats_edit_layout_sorting_options_title" = "Sortiere deine Nachrichten nach";
@@ -2599,8 +2599,8 @@
 "authentication_qr_login_confirm_alert" = "Bitte stelle sicher, dass du die Quelle dieses Codes kennst. Durch das Verbinden des Gerätes wirst du jemandem vollen Zugriff auf dein Konto gewähren.";
 "authentication_qr_login_confirm_subtitle" = "Bestätige, dass der folgende Code mit dem auf deinem anderen Gerät übereinstimmt:";
 "authentication_qr_login_confirm_title" = "Sichere Verbindung aufgebaut";
-"authentication_qr_login_display_step1" = "Öffne Element auf deinem anderen Gerät";
-"authentication_qr_login_start_step1" = "Öffne Element auf deinem anderen Gerät";
+"authentication_qr_login_display_step1" = "Öffne Synod auf deinem anderen Gerät";
+"authentication_qr_login_start_step1" = "Öffne Synod auf deinem anderen Gerät";
 "authentication_qr_login_start_subtitle" = "Nutze die Kamera dieses Gerätes, um den auf deinem anderen Gerät angezeigten QR-Code einzulesen:";
 "wysiwyg_composer_start_action_text_formatting" = "Textformatierung";
 "wysiwyg_composer_start_action_camera" = "Kamera";
