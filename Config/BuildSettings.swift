@@ -220,6 +220,8 @@ final class BuildSettings: NSObject {
     
     static let allowInviteExernalUsers: Bool = true
     
+    static let allowBackgroundAudioMessagePlayback: Bool = true
+    
     // MARK: - Side Menu
     static let enableSideMenu: Bool = true && !newAppLayoutEnabled
     static let sideMenuShowInviteFriends: Bool = false
@@ -392,7 +394,7 @@ final class BuildSettings: NSObject {
     static let locationSharingEnabled = false
     
     // MARK: - Voice Broadcast
-    static let voiceBroadcastChunkLength: Int = 600
+    static let voiceBroadcastChunkLength: Int = 120
     static let voiceBroadcastMaxLength: UInt64 = 144000
 
     // MARK: - MXKAppSettings
