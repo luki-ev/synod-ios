@@ -143,7 +143,7 @@ $ bundle exec pod install
 ## Synod.im branding
 
 ```
-$ convert *.png -fuzz 20% -fill '#32B4B6' -opaque '#0DBD8B' *.png
+$ for f in *.png; do convert "$f" -fuzz 20% -fill '#32B4B6' -opaque '#0DBD8B' "$f"; done
 $ sed -i.bak s,0DBD8B,32B4B6,g *.svg
 $ sed -i.bak 's/rgb(13,189,139)/rgb(50,180,182)/g' *.svg
 ```
