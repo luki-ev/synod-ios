@@ -385,7 +385,6 @@ final class BuildSettings: NSObject {
     // MARK: - Polls
     
     static let pollsEnabled = true
-    static var pollsHistoryEnabled: Bool = false
     
     // MARK: - Location Sharing
     
