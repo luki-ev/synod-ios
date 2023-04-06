@@ -108,9 +108,9 @@ final class BuildSettings: NSObject {
     // MARK: - Legal URLs
 
     // Note: Set empty strings to hide the related entry in application settings
-    static let applicationCopyrightUrlString = "https://synod.im/terms"
+    static let applicationCopyrightUrlString = ""
     static let applicationPrivacyPolicyUrlString = "https://synod.im/privacy"
-    static let applicationTermsConditionsUrlString = "https://synod.im/terms"
+    static let applicationAcceptableUsePolicyUrlString = "https://synod.im/terms"
     static let applicationHelpUrlString =
     "https://doc.librechurch.org/Wiki.jsp?page=Synod.im%20iPhone"
     
