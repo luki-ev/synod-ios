@@ -98,10 +98,15 @@ final class BuildSettings: NSObject {
     
     // MARK: - Server configuration
     
-    // Default servers proposed on the authentication screen
+    /// Force the user to set a homeserver instead of using the default one
+    static let forceHomeserverSelection = false
+
+    /// Default server proposed on the authentication screen
     static let serverConfigDefaultHomeserverUrlString = "https://synod.im"
-    static let serverConfigDefaultIdentityServerUrlString = "https://id.synod.im"
     
+    /// Default identity server
+    static let serverConfigDefaultIdentityServerUrlString = "https://id.synod.im"
+        
     static let serverConfigSygnalAPIUrlString = "https://push.synod.im/_matrix/push/v1/notify"
     
     
