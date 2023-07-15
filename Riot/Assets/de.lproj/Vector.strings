@@ -510,7 +510,7 @@
 "room_event_action_ban_prompt_reason" = "Grund für die Verbannung der Person";
 "room_action_send_photo_or_video" = "Foto oder Video senden";
 "room_action_send_sticker" = "Aufkleber senden";
-"settings_deactivate_account" = "DEAKTIVIERTES KONTO";
+"settings_deactivate_account" = "KONTO DEAKTIVIEREN";
 "settings_deactivate_my_account" = "Konto für immer deaktivieren";
 "widget_sticker_picker_no_stickerpacks_alert" = "Du hast aktuell keine Aufkleberpakete aktiviert.";
 "widget_sticker_picker_no_stickerpacks_alert_add_now" = "Welche hinzufügen?";
