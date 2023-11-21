@@ -102,13 +102,16 @@ final class BuildSettings: NSObject {
     static let forceHomeserverSelection = false
 
     /// Default server proposed on the authentication screen
-    static let serverConfigDefaultHomeserverUrlString = "https://synod.im"
+    static var serverConfigDefaultHomeserverUrlString: String {
+        MDMSettings.serverConfigDefaultHomeserverUrlString ?? "https://synod.im"
+    }
     
     /// Default identity server
     static let serverConfigDefaultIdentityServerUrlString = "https://id.synod.im"
         
-    static let serverConfigSygnalAPIUrlString = "https://push.synod.im/_matrix/push/v1/notify"
-    
+    static var serverConfigSygnalAPIUrlString: String {
+        MDMSettings.serverConfigSygnalAPIUrlString ?? "https://push.synod.im/_matrix/push/v1/notify"
+    }
     
     // MARK: - Legal URLs
 
@@ -135,7 +138,9 @@ final class BuildSettings: NSObject {
     // This baseURL is used to generate permalinks within the app (E.g. timeline message permalinks).
     // Optional String that when set is used as permalink base, when nil matrix.to format is used.
     // Example value would be "https://www.example.com", note there is no trailing '/'.
-    static let clientPermalinkBaseUrl: String? = nil
+    static var clientPermalinkBaseUrl: String? {
+        MDMSettings.clientPermalinkBaseUrl
+    }
     
     // MARK: - VoIP
     static var allowVoIPUsage: Bool {

@@ -1,3 +1,31 @@
+## Changes in 1.11.4 (2023-10-04)
+
+🙌 Improvements
+
+- Upgrade MatrixSDK version ([v0.27.3](https://github.com/matrix-org/matrix-ios-sdk/releases/tag/v0.27.3)).
+- Allow the use of Jitsi for 1:1 calls via a well-known configuration flag. ([#7684](https://github.com/vector-im/element-ios/issues/7684))
+
+
+## Changes in 1.11.3 (2023-09-13)
+
+🐛 Bugfixes
+
+- Show OIDC account management UI using embedded browser instead of system browser. ([#7671](https://github.com/vector-im/element-ios/issues/7671))
+- Hide Sign Out X/All Sessions buttons in the Device Manager when using OIDC. ([#7672](https://github.com/vector-im/element-ios/issues/7672))
+
+
+## Changes in 1.11.2 (2023-09-12)
+
+🙌 Improvements
+
+- Upgrade MatrixSDK version ([v0.27.2](https://github.com/matrix-org/matrix-ios-sdk/releases/tag/v0.27.2)).
+
+🐛 Bugfixes
+
+- Fix an issue where rooms were not correctly sorted after forwarding a message. ([#7641](https://github.com/vector-im/element-ios/issues/7641))
+- Add phone number UI and explanatory text is hidden if the 3 pid changes capability is disabled. ([#7670](https://github.com/vector-im/element-ios/issues/7670))
+
+
 ## Changes in 1.11.1 (2023-08-29)
 
 ✨ Features

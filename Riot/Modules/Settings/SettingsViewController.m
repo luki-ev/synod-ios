@@ -204,7 +204,8 @@ SettingsIdentityServerCoordinatorBridgePresenterDelegate,
 ServiceTermsModalCoordinatorBridgePresenterDelegate,
 TableViewSectionsDelegate,
 ThreadsBetaCoordinatorBridgePresenterDelegate,
-ChangePasswordCoordinatorBridgePresenterDelegate>
+ChangePasswordCoordinatorBridgePresenterDelegate,
+SSOAuthenticationPresenterDelegate>
 {
     // Current alert (if any).
     __weak UIAlertController *currentAlert;
@@ -300,6 +301,8 @@ ChangePasswordCoordinatorBridgePresenterDelegate>
 @property (nonatomic) BOOL isPreparingIdentityService;
 @property (nonatomic, strong) ServiceTermsModalCoordinatorBridgePresenter *serviceTermsModalCoordinatorBridgePresenter;
 
+@property (nonatomic, strong) SSOAuthenticationPresenter *ssoAuthenticationPresenter;
+
 @property (nonatomic) AnalyticsScreenTracker *screenTracker;
 
 @end
@@ -371,23 +374,24 @@ ChangePasswordCoordinatorBridgePresenterDelegate>
     {
         [sectionUserSettings addRowWithTag: USER_SETTINGS_PHONENUMBERS_OFFSET + index];
     }
-    if (BuildSettings.settingsScreenAllowAddingEmailThreepids &&
-        // If the threePidChanges is nil we assume the capability to be true
-        (!self.mainSession.homeserverCapabilities.threePidChanges ||
-         self.mainSession.homeserverCapabilities.threePidChanges.enabled))
-    {
-        [sectionUserSettings addRowWithTag:USER_SETTINGS_ADD_EMAIL_INDEX];
-    }
-    if (BuildSettings.settingsScreenAllowAddingPhoneThreepids)
-    {
-        [sectionUserSettings addRowWithTag:USER_SETTINGS_ADD_PHONENUMBER_INDEX];
-    }
-    if (BuildSettings.settingsScreenShowThreepidExplanatory)
-    {
-        NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:[VectorL10n settingsThreePidsManagementInformationPart1] attributes:@{}];
-        [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:[VectorL10n settingsThreePidsManagementInformationPart2] attributes:@{NSForegroundColorAttributeName: ThemeService.shared.theme.tintColor}]];
-        [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:[VectorL10n settingsThreePidsManagementInformationPart3] attributes:@{}]];
-        sectionUserSettings.attributedFooterTitle = attributedString;
+    // If the threePidChanges is nil we assume the capability to be true
+    if (!self.mainSession.homeserverCapabilities.threePidChanges ||
+        self.mainSession.homeserverCapabilities.threePidChanges.enabled) {
+        if (BuildSettings.settingsScreenAllowAddingEmailThreepids)
+        {
+            [sectionUserSettings addRowWithTag:USER_SETTINGS_ADD_EMAIL_INDEX];
+        }
+        if (BuildSettings.settingsScreenAllowAddingPhoneThreepids)
+        {
+            [sectionUserSettings addRowWithTag:USER_SETTINGS_ADD_PHONENUMBER_INDEX];
+        }
+        if (BuildSettings.settingsScreenShowThreepidExplanatory)
+        {
+            NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:[VectorL10n settingsThreePidsManagementInformationPart1] attributes:@{}];
+            [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:[VectorL10n settingsThreePidsManagementInformationPart2] attributes:@{NSForegroundColorAttributeName: ThemeService.shared.theme.tintColor}]];
+            [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:[VectorL10n settingsThreePidsManagementInformationPart3] attributes:@{}]];
+            sectionUserSettings.attributedFooterTitle = attributedString;
+        }
     }
     
     sectionUserSettings.headerTitle = [VectorL10n settingsUserSettings];
@@ -3925,7 +3929,12 @@ ChangePasswordCoordinatorBridgePresenterDelegate>
 {
     NSURL *url = [NSURL URLWithString: self.mainSession.homeserverWellknown.authentication.account];
     if (url) {
-        [UIApplication.sharedApplication openURL:url options:@{} completionHandler:nil];
+        SSOAccountService *service = [[SSOAccountService alloc] initWithAccountURL:url];
+        SSOAuthenticationPresenter *presenter = [[SSOAuthenticationPresenter alloc] initWithSsoAuthenticationService:service];
+        presenter.delegate = self;
+        self.ssoAuthenticationPresenter = presenter;
+        
+        [presenter presentForIdentityProvider:nil with:@"" from:self animated:YES];
     }
 }
 
@@ -4599,6 +4608,28 @@ ChangePasswordCoordinatorBridgePresenterDelegate>
     self.userSessionsFlowCoordinatorBridgePresenter = userSessionsFlowCoordinatorBridgePresenter;
 
     [self.userSessionsFlowCoordinatorBridgePresenter pushFrom:self.navigationController animated:YES];
+}
+
+#pragma mark - SSOAuthenticationPresenterDelegate
+
+- (void)ssoAuthenticationPresenterDidCancel:(SSOAuthenticationPresenter *)presenter
+{
+    self.ssoAuthenticationPresenter = nil;
+    MXLogDebug(@"OIDC account management complete.")
+}
+
+- (void)ssoAuthenticationPresenter:(SSOAuthenticationPresenter *)presenter authenticationDidFailWithError:(NSError *)error
+{
+    self.ssoAuthenticationPresenter = nil;
+    MXLogError(@"OIDC account management failed.")
+}
+
+- (void)ssoAuthenticationPresenter:(SSOAuthenticationPresenter *)presenter
+  authenticationSucceededWithToken:(NSString *)token
+             usingIdentityProvider:(SSOIdentityProvider *)identityProvider
+{
+    self.ssoAuthenticationPresenter = nil;
+    MXLogWarning(@"Unexpected callback after OIDC account management.")
 }
 
 @end
