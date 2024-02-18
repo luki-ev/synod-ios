@@ -1,3 +1,25 @@
+## Changes in 1.11.7 (2024-02-07)
+
+🙌 Improvements
+
+- Upgrade MatrixSDK version ([v0.27.6](https://github.com/matrix-org/matrix-ios-sdk/releases/tag/v0.27.6)).
+
+🐛 Bugfixes
+
+- Fix swapped accessibility label between strikethrough and underline format buttons in RTE. ([#7743](https://github.com/element-hq/element-ios/pull/7743))
+
+
+## Changes in 1.11.6 (2024-01-09)
+
+🙌 Improvements
+
+- Upgrade MatrixSDK version ([v0.27.5](https://github.com/matrix-org/matrix-ios-sdk/releases/tag/v0.27.5)).
+
+🧱 Build
+
+- Update CocoaPods and other gems. ([#7720](https://github.com/element-hq/element-ios/pull/7720))
+
+
 ## Changes in 1.11.5 (2023-11-28)
 
 🙌 Improvements
