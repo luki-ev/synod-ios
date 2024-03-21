@@ -9611,7 +9611,7 @@ public class VectorL10n: NSObject {
   public static var wysiwygComposerFormatActionQuote: String { 
     return VectorL10n.tr("Vector", "wysiwyg_composer_format_action_quote") 
   }
-  /// Apply underline format
+  /// Apply strikethrough format
   public static var wysiwygComposerFormatActionStrikethrough: String { 
     return VectorL10n.tr("Vector", "wysiwyg_composer_format_action_strikethrough") 
   }
@@ -9619,7 +9619,7 @@ public class VectorL10n: NSObject {
   public static var wysiwygComposerFormatActionUnIndent: String { 
     return VectorL10n.tr("Vector", "wysiwyg_composer_format_action_un_indent") 
   }
-  /// Apply strikethrough format
+  /// Apply underline format
   public static var wysiwygComposerFormatActionUnderline: String { 
     return VectorL10n.tr("Vector", "wysiwyg_composer_format_action_underline") 
   }
