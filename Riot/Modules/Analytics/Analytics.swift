@@ -14,7 +14,6 @@
 // limitations under the License.
 //
 
-import PostHog
 import AnalyticsEvents
 
 /// A class responsible for managing a variety of analytics clients
@@ -95,6 +94,9 @@ import AnalyticsEvents
         
         guard let session = session else { return }
         useAnalyticsSettings(from: session)
+        client.updateSuperProperties(.init(appPlatform: .EI,
+                                           cryptoSDK: .Rust,
+                                           cryptoSDKVersion: session.crypto.version))
     }
     
     /// Stops analytics tracking and calls `reset` to clear any IDs and event queues.
@@ -149,6 +151,13 @@ import AnalyticsEvents
             switch result {
             case .success(let settings):
                 self.identify(with: settings)
+                self.client.updateSuperProperties(
+                    AnalyticsEvent.SuperProperties(
+                        appPlatform: .EI,
+                        cryptoSDK: .Rust,
+                        cryptoSDKVersion: session.crypto.version
+                    )
+                )
                 self.service = nil
             case .failure:
                 MXLog.error("[Analytics] Failed to use analytics settings. Will continue to run without analytics ID.")
@@ -213,6 +222,25 @@ import AnalyticsEvents
     }
 }
 
+@objc
+protocol E2EAnalytics {
+    func trackE2EEError(_ failure: DecryptionFailure)
+}
+
+
+@objc extension Analytics: E2EAnalytics {
+    
+    /// Track an E2EE error that occurred
+    /// - Parameters:
+    ///   - reason: The error that occurred.
+    ///   - context: Additional context of the error that occured
+    func trackE2EEError(_ failure: DecryptionFailure) {
+        let event = failure.toAnalyticsEvent()
+        capture(event: event)
+    }
+    
+}
+
 // MARK: - Public tracking methods
 // The following methods are exposed for compatibility with Objective-C as
 // the `capture` method and the generated events cannot be bridged from Swift.
@@ -224,7 +252,9 @@ extension Analytics {
         let userProperties = AnalyticsEvent.UserProperties(allChatsActiveFilter: allChatsActiveFilter?.analyticsName,
                                                            ftueUseCaseSelection: ftueUseCase?.analyticsName,
                                                            numFavouriteRooms: numFavouriteRooms,
-                                                           numSpaces: numSpaces)
+                                                           numSpaces: numSpaces,
+                                                           recoveryState: nil,
+                                                           verificationState: nil)
         client.updateUserProperties(userProperties)
     }
     
@@ -266,20 +296,7 @@ extension Analytics {
     func trackInteraction(_ uiElement: AnalyticsUIElement) {
         trackInteraction(uiElement, interactionType: .Touch, index: nil)
     }
-    
-    /// Track an E2EE error that occurred
-    /// - Parameters:
-    ///   - reason: The error that occurred.
-    ///   - context: Additional context of the error that occured
-    func trackE2EEError(_ reason: DecryptionFailureReason, context: String) {
-        let event = AnalyticsEvent.Error(
-            context: context,
-            cryptoModule: .Rust,
-            domain: .E2EE,
-            name: reason.errorName
-        )
-        capture(event: event)
-    }
+
     
     /// Track when a user becomes unauthenticated without pressing the `sign out` button.
     /// - Parameters:
@@ -355,7 +372,8 @@ extension Analytics: MXAnalyticsDelegate {
     
     func trackCallError(with reason: __MXCallHangupReason, video isVideo: Bool, numberOfParticipants: Int, incoming isIncoming: Bool) {
         let callEvent = AnalyticsEvent.CallError(isVideo: isVideo, numParticipants: numberOfParticipants, placed: !isIncoming)
-        let event = AnalyticsEvent.Error(context: nil, cryptoModule: nil, domain: .VOIP, name: reason.errorName)
+        let event = AnalyticsEvent.Error(context: nil, cryptoModule: nil, cryptoSDK: nil, domain: .VOIP, eventLocalAgeMillis: nil,
+                                         isFederated: nil, isMatrixDotOrg: nil, name: reason.errorName, timeToDecryptMillis: nil, userTrustsOwnIdentity: nil, wasVisibleToUser: nil)
         capture(event: callEvent)
         capture(event: event)
     }
@@ -386,6 +404,7 @@ extension Analytics: MXAnalyticsDelegate {
         let event = AnalyticsEvent.Composer(inThread: inThread,
                                             isEditing: isEditing,
                                             isReply: isReply,
+                                            messageType: .Text,
                                             startsThread: startsThread)
         capture(event: event)
     }

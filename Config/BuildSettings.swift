@@ -283,7 +283,6 @@ final class BuildSettings: NSObject {
     static let settingsScreenShowChangePassword:Bool = true
     static let settingsScreenShowEnableStunServerFallback: Bool = false
     static let settingsScreenShowNotificationDecodedContentOption: Bool = true
-    static let settingsScreenShowNsfwRoomsOption: Bool = true
     static let settingsSecurityScreenShowSessions:Bool = true
     static let settingsSecurityScreenShowSetupBackup:Bool = true
     static let settingsSecurityScreenShowRestoreBackup:Bool = true

@@ -33,7 +33,6 @@
 #import "ContactDetailsViewController.h"
 
 #import "BugReportViewController.h"
-#import "DecryptionFailureTracker.h"
 
 #import "Tools.h"
 #import "WidgetManager.h"
@@ -1827,6 +1826,9 @@ NSString *const AppDelegateUniversalLinkDidChangeNotification = @"AppDelegateUni
             [self registerNewRequestNotificationForSession:mxSession];
             
             [self.pushNotificationService checkPushKitPushersInSession:mxSession];
+            
+            // Clean the storage by removing expired data
+            [mxSession removeExpiredMessages];
         }
         else if (mxSession.state == MXSessionStateRunning)
         {
