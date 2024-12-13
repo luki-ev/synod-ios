@@ -1,3 +1,33 @@
+## Changes in 1.11.22 (2024-12-10)
+
+🐛 Bugfixes
+
+- Fix a crash when restoring from a backup and a bug where you couldn't reset cross-signing. ([#7883](https://github.com/element-hq/element-ios/pull/7883))
+- Fix display of incoming call for group calls when receiving VOIP notification. ([#7858](https://github.com/element-hq/element-ios/issues/7858))
+
+
+## Changes in 1.11.21 (2024-11-14)
+
+No significant changes.
+
+
+## Changes in 1.11.20 (2024-11-12)
+
+No significant changes.
+
+
+## Changes in 1.11.19 (2024-10-15)
+
+No significant changes.
+
+
+## Changes in 1.11.18 (2024-09-17)
+
+🙌 Improvements
+
+- Replaced deprecated OlmKit APIs from ContentScanner with ones from the CryptoSDK.
+
+
 ## Changes in 1.11.17 (2024-08-20)
 
 🙌 Improvements
