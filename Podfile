@@ -1,4 +1,4 @@
-source 'https://cdn.cocoapods.org/'
+source 'https://github.com/CocoaPods/Specs.git'
 
 # Uncomment this line to define a global platform for your project
 platform :ios, '15.0'
@@ -24,7 +24,6 @@ end
 
 def import_SwiftUI_pods
     pod 'Introspect', '~> 0.1'
-    pod 'DSBottomSheet', '~> 0.3'
     pod 'ZXingObjC', '~> 3.6.9'
 end
 
@@ -35,7 +34,7 @@ abstract_target 'RiotPods' do
   pod 'KeychainAccess', '~> 4.2.2'
   pod 'WeakDictionary', '~> 2.0'
 
-  pod 'Sentry', '~> 7.15.0'
+  pod 'Sentry', '~> 8.46.0'
 
   pod 'zxcvbn-ios'
 

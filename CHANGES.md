@@ -1,3 +1,50 @@
+## Changes in 1.11.30 (2025-06-10)
+
+No significant changes.
+
+
+## Changes in 1.11.29 (2025-05-29)
+
+No significant changes.
+
+
+## Changes in 1.11.28 (2025-05-28)
+
+🙌 Improvements
+
+- Support for experimental MSC4286 during event rendering. ([#7927](https://github.com/element-hq/element-ios/pull/7927))
+
+
+## Changes in 1.11.27 (2025-03-28)
+
+No significant changes.
+
+
+## Changes in 1.11.26 (2025-03-28)
+
+No significant changes.
+
+
+## Changes in 1.11.25 (2025-02-04)
+
+No significant changes.
+
+
+## Changes in 1.11.24 (2025-02-04)
+
+No significant changes.
+
+
+## Changes in 1.11.23 (2025-01-10)
+
+🙌 Improvements
+
+- Show sunset banners, guiding users to install Element X when registering a new account against a server with MAS. ([#7889](https://github.com/element-hq/element-ios/issues/7889))
+
+⚠️ API Changes
+
+- Adds a BuildSettings.replacementApp setting, used to control the sunset banners. ([#7889](https://github.com/element-hq/element-ios/issues/7889))
+
 ## Changes in 1.11.22 (2024-12-10)
 
 🐛 Bugfixes

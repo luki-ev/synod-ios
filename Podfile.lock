@@ -18,7 +18,6 @@ PODS:
   - BlueECC (1.2.5)
   - BlueRSA (1.0.200)
   - Down (0.11.0)
-  - DSBottomSheet (0.3.0)
   - DSWaveformImage (6.1.1)
   - FLEX (5.22.10)
   - FlowCommoniOS (1.12.2)
@@ -39,19 +38,19 @@ PODS:
   - LoggerAPI (1.9.200):
     - Logging (~> 1.1)
   - Logging (1.4.0)
-  - MatrixSDK (0.27.16):
-    - MatrixSDK/Core (= 0.27.16)
-  - MatrixSDK/Core (0.27.16):
+  - MatrixSDK (0.27.17):
+    - MatrixSDK/Core (= 0.27.17)
+  - MatrixSDK/Core (0.27.17):
     - AFNetworking (~> 4.0.0)
     - GZIP (~> 1.3.0)
     - libbase58 (~> 0.1.4)
-    - MatrixSDKCrypto (= 0.4.3)
+    - MatrixSDKCrypto (= 0.11.1)
     - Realm (= 10.27.0)
     - SwiftyBeaver (= 1.9.5)
-  - MatrixSDK/JingleCallStack (0.27.16):
+  - MatrixSDK/JingleCallStack (0.27.17):
     - JitsiMeetSDKLite (= 8.1.2-lite)
     - MatrixSDK/Core
-  - MatrixSDKCrypto (0.4.3)
+  - MatrixSDKCrypto (0.11.1)
   - ReadMoreTextView (3.0.1)
   - Realm (10.27.0):
     - Realm/Headers (= 10.27.0)
@@ -61,9 +60,9 @@ PODS:
     - Reusable/View (= 4.1.2)
   - Reusable/Storyboard (4.1.2)
   - Reusable/View (4.1.2)
-  - Sentry (7.15.0):
-    - Sentry/Core (= 7.15.0)
-  - Sentry/Core (7.15.0)
+  - Sentry (8.46.0):
+    - Sentry/Core (= 8.46.0)
+  - Sentry/Core (8.46.0)
   - SideMenu (6.5.0)
   - SwiftBase32 (0.9.0)
   - SwiftFormat/CLI (0.54.5)
@@ -86,7 +85,6 @@ PODS:
 
 DEPENDENCIES:
   - Down (~> 0.11.0)
-  - DSBottomSheet (~> 0.3)
   - DSWaveformImage (~> 6.1.1)
   - FLEX (~> 5.22.10)
   - FlowCommoniOS (~> 1.12.0)
@@ -99,7 +97,7 @@ DEPENDENCIES:
   - MatrixSDK/JingleCallStack (from `matrix-ios-sdk/MatrixSDK.podspec`)
   - ReadMoreTextView (~> 3.0.1)
   - Reusable (~> 4.1)
-  - Sentry (~> 7.15.0)
+  - Sentry (~> 8.46.0)
   - SideMenu (~> 6.5)
   - SwiftBase32 (~> 0.9.0)
   - SwiftFormat/CLI
@@ -113,13 +111,15 @@ DEPENDENCIES:
   - ZXingObjC (~> 3.6.9)
 
 SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - MatrixSDKCrypto
+    - Sentry
   trunk:
     - AFNetworking
     - BlueCryptor
     - BlueECC
     - BlueRSA
     - Down
-    - DSBottomSheet
     - DSWaveformImage
     - FLEX
     - FlowCommoniOS
@@ -135,11 +135,9 @@ SPEC REPOS:
     - libPhoneNumber-iOS
     - LoggerAPI
     - Logging
-    - MatrixSDKCrypto
     - ReadMoreTextView
     - Realm
     - Reusable
-    - Sentry
     - SideMenu
     - SwiftBase32
     - SwiftFormat
@@ -163,7 +161,6 @@ SPEC CHECKSUMS:
   BlueECC: 0d18e93347d3ec6d41416de21c1ffa4d4cd3c2cc
   BlueRSA: dfeef51db96bcc4edec654956c1581adbda4e6a3
   Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
-  DSBottomSheet: ca0ac37eb5af2dd54663f86b84382ed90a59be2a
   DSWaveformImage: 3c718a0cf99291887ee70d1d0c18d80101d3d9ce
   FLEX: f21ee4f498eed3f8a1eded66b21939fd3b7a22ce
   FlowCommoniOS: ca92071ab526dc89905495a37844fd7e78d1a7f2
@@ -179,12 +176,12 @@ SPEC CHECKSUMS:
   libPhoneNumber-iOS: 0a32a9525cf8744fe02c5206eb30d571e38f7d75
   LoggerAPI: ad9c4a6f1e32f518fdb43a1347ac14d765ab5e3d
   Logging: beeb016c9c80cf77042d62e83495816847ef108b
-  MatrixSDK: ce8f2cec670c2212144a129cc617d4144c89b97f
-  MatrixSDKCrypto: 27bee960e0e8b3a3039f3f3e93dd2ec88299c77e
+  MatrixSDK: 45f9f97e7424e5d8731bf6b207c728a71caa8eb1
+  MatrixSDKCrypto: e44608012cae9befc52f13cd8e56c6f51ac83702
   ReadMoreTextView: 19147adf93abce6d7271e14031a00303fe28720d
   Realm: 9ca328bd7e700cc19703799785e37f77d1a130f2
   Reusable: 6bae6a5e8aa793c9c441db0213c863a64bce9136
-  Sentry: 63ca44f5e0c8cea0ee5a07686b02e56104f41ef7
+  Sentry: da60d980b197a46db0b35ea12cb8f39af48d8854
   SideMenu: f583187d21c5b1dd04c72002be544b555a2627a2
   SwiftBase32: 9399c25a80666dc66b51e10076bf591e3bbb8f17
   SwiftFormat: 543a7b1ab4a6ce2d88bd5616a17903446ca3dc5c
@@ -198,6 +195,6 @@ SPEC CHECKSUMS:
   zxcvbn-ios: fef98b7c80f1512ff0eec47ac1fa399fc00f7e3c
   ZXingObjC: 8898711ab495761b2dbbdec76d90164a6d7e14c5
 
-PODFILE CHECKSUM: 9148246fffa2c32e3c9b29a51cae4bb037497056
+PODFILE CHECKSUM: 60f4fe3695f2304b9bba734acf38d59c79678ac1
 
-COCOAPODS: 1.14.3
+COCOAPODS: 1.16.2
